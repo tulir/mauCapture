@@ -72,7 +72,7 @@ public class MauCapture {
 		pencil = createToggleButton(getIcon("pencil.png"), 48, 48, 0, 4 * 48, "Freeform drawing", editors, "FREE");
 		pencil.setSelected(true);
 		text = createToggleButton(getIcon("text.png"), 48, 48, 0, 5 * 48, "Write text", editors, "TEXT");
-		erase = createToggleButton(getIcon("eraser.png"), 48, 48, 0, 6 * 48, "Eraser", editors, "ERASER");
+		erase = createToggleButton(getIcon("eraser.png"), 48, 48, 0, 6 * 48, "Eraser", editors, "ERASE");
 		crop = createButton(getIcon("crop.png"), 48, 48, 0, 7 * 48, "Crop the image", null, "CROP");
 		
 		jdp = new JDrawPlate(null);
