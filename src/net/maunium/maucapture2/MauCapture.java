@@ -20,6 +20,9 @@ import javax.swing.JToggleButton;
 import javax.swing.UIManager;
 
 import net.maunium.maucapture2.swing.JDrawPlate;
+import net.maunium.maucapture2.uploaders.ImgurUploader;
+import net.maunium.maucapture2.uploaders.MISUploader;
+import net.maunium.maucapture2.uploaders.Uploader;
 
 public class MauCapture {
 	public static final Font lato = createLato();
@@ -172,7 +175,11 @@ public class MauCapture {
 	private ActionListener uploaders = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
-			// TODO: Uploading images
+			if (evt.getActionCommand().equals("MIS")) {
+				Uploader.upload(new MISUploader(getFrame()), jdp.getImage());
+			} else if (evt.getActionCommand().equals("IMGUR")) {
+				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
+			}
 		}
 	};
 	
