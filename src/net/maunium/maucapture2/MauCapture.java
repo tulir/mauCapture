@@ -33,7 +33,7 @@ import net.maunium.maucapture2.uploaders.Uploader;
 public class MauCapture {
 	public static final Font lato = createLato();
 	private JFrame frame;
-	private JButton capture, preferences, save, copy, uploadMIS, uploadImgur, color, crop;
+	private JButton capture, preferences/* , save, copy */, uploadMIS, uploadImgur, color, crop;
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase;
 	private JPanel top, side;
 	private JDrawPlate jdp;
