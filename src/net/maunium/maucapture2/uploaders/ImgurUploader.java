@@ -8,11 +8,8 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -33,10 +30,6 @@ import com.google.gson.JsonParser;
 import net.maunium.maucapture2.util.ProgressFileBody;
 
 public class ImgurUploader extends Uploader {
-	private JDialog frame;
-	private JProgressBar p;
-	private JTextField address;
-	
 	public ImgurUploader(JFrame host) {
 		super(host);
 		frame.setTitle("MauCapture Imgur Uploader");
@@ -45,6 +38,7 @@ public class ImgurUploader extends Uploader {
 	
 	@Override
 	public void upload(BufferedImage bi) {
+		long st = System.currentTimeMillis();
 		File f = new File(System.getProperty("java.io.tmpdir") + File.separator + "maucapture_imgur.png");
 		try {
 			ImageIO.write(bi, "png", f);
@@ -52,8 +46,6 @@ public class ImgurUploader extends Uploader {
 			e.printStackTrace();
 			return;
 		}
-		
-		long st = System.currentTimeMillis();
 		
 		HttpClient hc = HttpClientBuilder.create().build();
 		HttpContext context = new BasicHttpContext();

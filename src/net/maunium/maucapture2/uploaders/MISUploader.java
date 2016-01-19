@@ -34,14 +34,10 @@ import com.google.gson.JsonParser;
 import net.maunium.maucapture2.util.ProgressStringBody;
 
 public class MISUploader extends Uploader {
-	private JDialog frame;
-	private JProgressBar p;
-	private JTextField address;
-	
 	public MISUploader(JFrame host) {
 		super(host);
-		frame.setTitle("MauCapture Imgur Uploader");
-		p.setString("Preparing to upload to imgur.com");
+		frame.setTitle("MauCapture MIS Uploader");
+		p.setString("Preparing to upload to localhost:29300");
 	}
 	
 	@Override

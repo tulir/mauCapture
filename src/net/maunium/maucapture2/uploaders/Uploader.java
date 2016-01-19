@@ -13,15 +13,16 @@ import javax.swing.JTextField;
 import net.maunium.maucapture2.MauCapture;
 
 public abstract class Uploader {
-	private JDialog frame;
-	private JProgressBar p;
-	private JTextField address;
+	protected JDialog frame;
+	protected JProgressBar p;
+	protected JTextField address;
 	
 	public Uploader(JFrame host) {
 		frame = new JDialog(host, "MauCapture Image Uploader");
 		frame.setLayout(null);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(host);
+		frame.setAlwaysOnTop(true);
 		frame.setSize(355, 105);
 		frame.setFont(MauCapture.lato);
 		frame.addWindowListener(new WindowAdapter() {
@@ -42,7 +43,7 @@ public abstract class Uploader {
 		
 		address = new JTextField("The image URL will appear here");
 		address.setEditable(false);
-		address.setSize(340, 20);
+		address.setSize(340, 25);
 		address.setLocation(5, 50);
 		address.setFont(MauCapture.lato);
 		
