@@ -16,6 +16,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -29,10 +30,43 @@ import com.google.gson.JsonParser;
 import net.maunium.maucapture2.util.ProgressStringEntity;
 
 public class MISUploader extends Uploader {
-	public MISUploader(JFrame host) {
+	private String addr, imageName, username, authtoken;
+	
+	public MISUploader(JFrame host, String addr, String imageName, String username, String authtoken) {
 		super(host);
+		if (!addr.endsWith("/")) addr = addr + "/";
+		this.addr = addr;
+		this.imageName = imageName;
+		this.username = username;
+		this.authtoken = authtoken;
 		frame.setTitle("MauCapture MIS Uploader");
-		p.setString("Preparing to upload to localhost:29300");
+		p.setString("Preparing to upload to " + addr);
+	}
+	
+	public static String login(String addr, String username, String password) {
+		HttpClient hc = HttpClientBuilder.create().build();
+		HttpContext context = new BasicHttpContext();
+		HttpPost post = new HttpPost(addr + "insert");
+		try {
+			JsonObject payload = new JsonObject();
+			payload.addProperty("username", username);
+			payload.addProperty("password", password);
+			post.setEntity(new StringEntity(new Gson().toJson(payload), ContentType.APPLICATION_JSON));
+			
+			HttpResponse httpresp = hc.execute(post, context);
+			
+			JsonElement e = new JsonParser().parse(EntityUtils.toString(httpresp.getEntity()));
+			JsonObject main = e.getAsJsonObject();
+			JsonElement authToken = main.get("auth-token");
+			if (authToken != null) {
+				return authToken.getAsString();
+			} else {
+				return main.get("error").getAsString();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "exception";
+		}
 	}
 	
 	@Override
@@ -49,14 +83,14 @@ public class MISUploader extends Uploader {
 		
 		HttpClient hc = HttpClientBuilder.create().build();
 		HttpContext context = new BasicHttpContext();
-		HttpPost post = new HttpPost("http://localhost:29300/insert");
+		HttpPost post = new HttpPost(addr + "insert");
 		
 		try {
 			JsonObject payload = new JsonObject();
 			payload.addProperty("image", image);
-			payload.addProperty("image-name", "asddsa");
-			payload.addProperty("username", "tulir293");
-			payload.addProperty("auth-token", "T9Jn655lryGglcYrz9Pmac/ls+EjokDLXNYWmIkZCkk");
+			payload.addProperty("image-name", imageName);
+			payload.addProperty("username", username);
+			payload.addProperty("auth-token", authtoken);
 			post.setEntity(new ProgressStringEntity(new Gson().toJson(payload), ContentType.APPLICATION_JSON, p));
 			
 			HttpResponse httpresp = hc.execute(post, context);
@@ -64,7 +98,7 @@ public class MISUploader extends Uploader {
 			JsonElement e = new JsonParser().parse(EntityUtils.toString(httpresp.getEntity()));
 			JsonObject main = e.getAsJsonObject();
 			if (main.get("success").getAsBoolean()) {
-				String url = "http://localhost:29300/" + "asdasdasd" + ".png";
+				String url = addr + imageName + ".png";
 				
 				Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 				StringSelection ss = new StringSelection(url);
