@@ -13,6 +13,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+/**
+ * JDrawPlate is an image viewer with basic editing capabilities.
+ * 
+ * @author Tulir293
+ * @since 2.0
+ */
 public class JDrawPlate extends JComponent implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	private BufferedImage bi, original;
@@ -47,6 +53,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	
 	public JDrawPlate(BufferedImage bi, Color drawColor, int drawSize) {
 		this.bi = bi;
+		// The original image used for erasing changes.
 		original = deepCopy(bi);
 		color = drawColor;
 		size = drawSize;
@@ -61,12 +68,15 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	@Override
 	public void paintComponent(Graphics g) {
 		if (bi != null) {
+			// Draw the image itself.
 			g.drawImage(bi, 0, 0, bi.getWidth(), bi.getHeight(), null);
 		} else {
+			// Image is null, draw a white background.
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 		
+		// Draw preview of circles/squares/arrows
 		if (clickStart == null || clickEnd == null) return;
 		Graphics2D g2 = (Graphics2D) g;
 		g.setColor(color);
@@ -85,7 +95,13 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		}
 	}
 	
-	public void draw(int x, int y) {
+	/**
+	 * This handles mouse dragging/clicking for free drawing and erasing.
+	 * 
+	 * @param x The X coordinate of the mouse.
+	 * @param y The Y coordinate of the mouse.
+	 */
+	public void mouse(int x, int y) {
 		Graphics2D g = bi.createGraphics();
 		g.setColor(color);
 		g.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -181,7 +197,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (drawMode == DrawMode.FREE || drawMode == DrawMode.ERASE) {
-			draw(e.getX() - size / 2, e.getY() - size / 2);
+			mouse(e.getX() - size / 2, e.getY() - size / 2);
 		} else {
 			clickStart = new Point(e.getX(), e.getY());
 		}
@@ -190,7 +206,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (drawMode == DrawMode.FREE || drawMode == DrawMode.ERASE) {
-			draw(e.getX() - size / 2, e.getY() - size / 2);
+			mouse(e.getX() - size / 2, e.getY() - size / 2);
 		} else if (drawMode != DrawMode.TEXT) {
 			clickEnd = new Point(e.getX(), e.getY());
 			repaint();
