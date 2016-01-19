@@ -50,7 +50,7 @@ public class Screenshot {
 		si.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (si.xe > 20 || si.ye > 20) {
+				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
 					host.open(bi.getSubimage(si.xs, si.ys, si.xe, si.ye));
 					frame.dispose();
 				} else {
