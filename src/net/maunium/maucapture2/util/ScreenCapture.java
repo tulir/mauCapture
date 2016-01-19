@@ -26,6 +26,15 @@ public class ScreenCapture {
 	}
 	
 	public static BufferedImage capture(Rectangle r) {
+		// If !linux
+//		try {
+//			return new Robot().createScreenCapture(r);
+//		} catch (AWTException e) {
+//			System.err.println("Error capturing screen: ");
+//			e.printStackTrace();
+//			return null;
+//		}
+		// else
 		try {
 			FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(":0.0+" + r.x + "," + r.y);
 			grabber.setFormat("x11grab");
@@ -44,7 +53,7 @@ public class ScreenCapture {
 	
 	/*
 	 * public static BufferedImage capture(Rectangle r) { BufferedImage bi; try { bi = new
-	 * Robot().createScreenCapture(r); } catch (AWTException e) { System.err.println(
-	 * "Error capturing screen: "); e.printStackTrace(); return null; } return bi; }
+	 * Robot().createScreenCapture(r); } catch (AWTException e) { System.err.println( "Error capturing screen: ");
+	 * e.printStackTrace(); return null; } return bi; }
 	 */
 }
