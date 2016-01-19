@@ -36,6 +36,13 @@ public class MauCapture {
 			@Override
 			public void componentResized(ComponentEvent evt) {
 				int width = frame.getContentPane().getWidth(), height = frame.getContentPane().getHeight();
+				if (width < 520 || height < 440) {
+					if (width < 520) width = 520;
+					if (height < 440) height = 440;
+					frame.getContentPane().setPreferredSize(new Dimension(width, height));
+					frame.pack();
+					return;
+				}
 				top.setSize(width, 48);
 				side.setSize(48, height);
 				
