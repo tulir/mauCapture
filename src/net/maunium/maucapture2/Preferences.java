@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -129,6 +130,13 @@ public class Preferences {
 				host.setAddress(addr.getText());
 				if (savePassword.isSelected()) host.setPassword(String.valueOf(password.getPassword()));
 				host.setSavePassword(savePassword.isSelected());
+				host.setUsername(username.getText());
+				try {
+					host.saveConfig();
+				} catch (IOException e1) {
+					System.err.println("Failed to save config:");
+					e1.printStackTrace();
+				}
 				frame.dispose();
 			}
 		});
