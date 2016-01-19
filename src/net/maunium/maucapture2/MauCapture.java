@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Random;
 
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
@@ -32,11 +33,14 @@ import net.maunium.maucapture2.uploaders.Uploader;
  */
 public class MauCapture {
 	public static final Font lato = createLato();
+	
 	private JFrame frame;
 	private JButton capture, preferences/* , save, copy */, uploadMIS, uploadImgur, color, crop;
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase;
 	private JPanel top, side;
 	private JDrawPlate jdp;
+	
+	private String username = "tulir293", authtoken = "ysBYpIgE+XzQQjPgKYnW9BNSFyN4eOAIxpqtqIOUEhw", url = "http://localhost:29300";
 	
 	public MauCapture() {
 		frame = new JFrame("mauCapture 2.0");
@@ -185,13 +189,23 @@ public class MauCapture {
 	};
 	
 	private ActionListener uploaders = new ActionListener() {
+		private Random r = new Random(System.nanoTime());
+		
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (evt.getActionCommand().equals("MIS")) {
-				Uploader.upload(new MISUploader(getFrame()), jdp.getImage());
+				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), username, authtoken), jdp.getImage());
 			} else if (evt.getActionCommand().equals("IMGUR")) {
 				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
 			}
+		}
+		
+		private String randomize(int chars) {
+			char[] allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < chars; i++)
+				sb.append(allowed[r.nextInt(allowed.length)]);
+			return sb.toString();
 		}
 	};
 	
