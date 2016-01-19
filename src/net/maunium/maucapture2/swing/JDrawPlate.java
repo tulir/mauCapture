@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -23,8 +24,8 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	private static final long serialVersionUID = 1L;
 	private BufferedImage bi, original;
 	
-	private Color color = Color.RED;
-	private int size = 10;
+	private Color color;
+	private int size;
 	private boolean fill = false;
 	
 	private DrawMode drawMode = DrawMode.FREE;
@@ -45,10 +46,6 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	
 	public JDrawPlate(BufferedImage bi, int drawSize) {
 		this(bi, Color.RED, drawSize);
-	}
-	
-	public JDrawPlate(BufferedImage bi, int drawSize, Color drawColor) {
-		this(bi, drawColor, drawSize);
 	}
 	
 	public JDrawPlate(BufferedImage bi, Color drawColor, int drawSize) {
@@ -190,6 +187,19 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		return b;
 	}
 	
+	public void writeChar(char c) {
+		if (drawMode != DrawMode.TEXT || Character.isISOControl(c) || clickStart == null) return;
+		
+		String draw = Character.toString(c);
+		Graphics2D g = (Graphics2D) bi.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setColor(color);
+		g.setFont(getFont().deriveFont((float) size));
+		g.drawString(draw, clickStart.x, clickStart.y);
+		clickStart.setLocation(clickStart.x + g.getFontMetrics().stringWidth(draw), clickStart.y);
+		repaint();
+	}
+	
 	/*
 	 * Key and mouse handlers
 	 */
@@ -238,18 +248,6 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 			clickStart = null;
 		}
 		clickEnd = null;
-		repaint();
-	}
-	
-	public void writeChar(char c) {
-		if (drawMode != DrawMode.TEXT || Character.isISOControl(c) || clickStart == null) return;
-		
-		String draw = Character.toString(c);
-		Graphics g = bi.getGraphics();
-		g.setColor(color);
-		g.setFont(getFont().deriveFont((float) size));
-		g.drawString(draw, clickStart.x, clickStart.y);
-		clickStart.setLocation(clickStart.x + g.getFontMetrics().stringWidth(draw), clickStart.y);
 		repaint();
 	}
 	
