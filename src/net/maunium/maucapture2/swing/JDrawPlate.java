@@ -76,8 +76,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		// Draw preview of circles/squares/arrows
 		if (clickStart == null || clickEnd == null) return;
 		Graphics2D g2 = (Graphics2D) g;
-		g.setColor(color);
-		g2.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		prepareGraphics(g2);
 		switch (drawMode) {
 			case CIRCLE:
 				drawCircle(g);
@@ -100,8 +99,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	 */
 	public void mouse(int x, int y) {
 		Graphics2D g = bi.createGraphics();
-		g.setColor(color);
-		g.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		prepareGraphics(g);
 		switch (drawMode) {
 			case FREE:
 				if (clickStart != null) {
@@ -192,9 +190,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		
 		String draw = Character.toString(c);
 		Graphics2D g = (Graphics2D) bi.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g.setColor(color);
-		g.setFont(getFont().deriveFont((float) size));
+		prepareGraphics(g);
 		g.drawString(draw, clickStart.x, clickStart.y);
 		clickStart.setLocation(clickStart.x + g.getFontMetrics().stringWidth(draw), clickStart.y);
 		repaint();
@@ -228,8 +224,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		if (drawMode == DrawMode.ARROW || drawMode == DrawMode.CIRCLE || drawMode == DrawMode.SQUARE) {
 			clickEnd = new Point(e.getX(), e.getY());
 			Graphics2D g = bi.createGraphics();
-			g.setColor(color);
-			g.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			prepareGraphics(g);
 			
 			switch (drawMode) {
 				case CIRCLE:
@@ -295,6 +290,16 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	
 	public static enum DrawMode {
 		FREE, ERASE, CIRCLE, SQUARE, ARROW, TEXT;
+	}
+	
+	/**
+	 * Set the color, stroke, font and rendering hints for the given Graphics2D object.
+	 */
+	public void prepareGraphics(Graphics2D g) {
+		g.setColor(color);
+		g.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setFont(getFont().deriveFont(size * 1.5f));
 	}
 	
 	/*
