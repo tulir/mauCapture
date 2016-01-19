@@ -11,7 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
-import javax.swing.Icon;
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -73,23 +73,35 @@ public class MauCapture {
 		capture.setLocation(0, 0);
 		capture.setToolTipText("Take a new capture");
 		capture.setActionCommand("CAPTURE");
+		capture.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				Screenshot.takeScreenshot(MauCapture.this);
+			}
+		});
 		
-		preferences = createButton(getIcon("preferences.png"), 48, 48, 0, 0, "Preferences", null, "PREFS");
+		preferences = createButton("preferences.png", 48, 48, 0, 0, "Preferences", settings, "PREFS");
 		// TODO: save and copy
-		uploadMIS = createButton(getIcon("mauImageServer.png"), 128, 48, 0, 0, "Upload to a mauImageServer", uploaders, "MIS");
+		uploadMIS = createButton("mauImageServer.png", 128, 48, 0, 0, "Upload to a mauImageServer", uploaders, "MIS");
 		uploadMIS.setText("MIS Upload");
-		uploadImgur = createButton(getIcon("imgur.png"), 128, 48, 0, 0, "Upload to Imgur", uploaders, "IMGUR");
+		uploadImgur = createButton("imgur.png", 128, 48, 0, 0, "Upload to Imgur", uploaders, "IMGUR");
 		uploadImgur.setText("Imgur Upload");
 		
-		color = createButton(getIcon("color.png"), 48, 48, 0, 0 * 48, "Change draw/text color", null, "COLOR");
-		arrow = createToggleButton(getIcon("arrow.png"), 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
-		rectangle = createToggleButton(getIcon("rectangle.png"), 48, 48, 0, 2 * 48, "Draw a rectangle", editors, "SQUARE");
-		circle = createToggleButton(getIcon("circle.png"), 48, 48, 0, 3 * 48, "Draw a circle", editors, "CIRCLE");
-		pencil = createToggleButton(getIcon("pencil.png"), 48, 48, 0, 4 * 48, "Freeform drawing", editors, "FREE");
+		color = createButton("color.png", 48, 48, 0, 0 * 48, "Change draw/text color", settings, "COLOR");
+		arrow = createToggleButton("arrow.png", 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
+		rectangle = createToggleButton("rectangle.png", 48, 48, 0, 2 * 48, "Draw a rectangle", editors, "SQUARE");
+		circle = createToggleButton("circle.png", 48, 48, 0, 3 * 48, "Draw a circle", editors, "CIRCLE");
+		pencil = createToggleButton("pencil.png", 48, 48, 0, 4 * 48, "Freeform drawing", editors, "FREE");
 		pencil.setSelected(true);
-		text = createToggleButton(getIcon("text.png"), 48, 48, 0, 5 * 48, "Write text", editors, "TEXT");
-		erase = createToggleButton(getIcon("eraser.png"), 48, 48, 0, 6 * 48, "Eraser", editors, "ERASE");
-		crop = createButton(getIcon("crop.png"), 48, 48, 0, 7 * 48, "Crop the image", null, "CROP");
+		text = createToggleButton("text.png", 48, 48, 0, 5 * 48, "Write text", editors, "TEXT");
+		erase = createToggleButton("eraser.png", 48, 48, 0, 6 * 48, "Eraser", editors, "ERASE");
+		crop = createButton("crop.png", 48, 48, 0, 7 * 48, "Crop the image", null, "CROP");
 		
 		jdp = new JDrawPlate(null);
 		jdp.setLocation(48, 48);
@@ -129,21 +141,15 @@ public class MauCapture {
 		frame.add(jdp);
 	}
 	
-	private JButton createButton(Icon i, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
-		JButton button = new JButton(i);
-		button.setFont(lato);
-		button.setBorderPainted(false);
-		button.setFocusPainted(false);
-		button.setSize(width, height);
-		button.setLocation(x, y);
-		button.setToolTipText(tooltip);
-		button.addActionListener(aclis);
-		button.setActionCommand(actionCommand);
-		return button;
+	private JButton createButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
+		return configureButton(new JButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 	
-	private JToggleButton createToggleButton(Icon i, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
-		JToggleButton button = new JToggleButton(i);
+	private JToggleButton createToggleButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
+		return configureButton(new JToggleButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
+	}
+	
+	private <T extends AbstractButton> T configureButton(T button, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
 		button.setFont(lato);
 		button.setBorderPainted(false);
 		button.setFocusPainted(false);
@@ -189,6 +195,17 @@ public class MauCapture {
 		}
 	};
 	
+	private ActionListener settings = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			if (evt.getActionCommand().equals("PREFS")) {
+			
+			} else if (evt.getActionCommand().equals("COLOR")) {
+				Preferences.colorSelector(MauCapture.this);
+			}
+		}
+	};
+	
 	private ImageIcon getIcon(String path) {
 		path = "assets/" + path;
 		URL url = MauCapture.class.getClassLoader().getResource(path);
@@ -199,6 +216,10 @@ public class MauCapture {
 	
 	public JFrame getFrame() {
 		return frame;
+	}
+	
+	public JDrawPlate getDrawPlate() {
+		return jdp;
 	}
 	
 	public static void main(String[] args) {
