@@ -15,7 +15,7 @@ import net.maunium.maucapture2.swing.JSelectableImage;
 
 public class Screenshot {
 	public static void takeScreenshot(MauCapture host) {
-		JFrame frame = new JFrame("MauCapture 2.0");
+		JFrame frame = new JFrame("mauCapture 2.0");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setUndecorated(true);
 		frame.setAlwaysOnTop(true);

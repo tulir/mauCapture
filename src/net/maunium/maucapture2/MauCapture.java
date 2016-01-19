@@ -24,6 +24,12 @@ import net.maunium.maucapture2.uploaders.ImgurUploader;
 import net.maunium.maucapture2.uploaders.MISUploader;
 import net.maunium.maucapture2.uploaders.Uploader;
 
+/**
+ * MauCapture 2.0 main class.
+ * 
+ * @author Tulir293
+ * @since 2.0
+ */
 public class MauCapture {
 	public static final Font lato = createLato();
 	private JFrame frame;
@@ -33,7 +39,7 @@ public class MauCapture {
 	private JDrawPlate jdp;
 	
 	public MauCapture() {
-		frame = new JFrame("MauCapture 2.0");
+		frame = new JFrame("mauCapture 2.0");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
