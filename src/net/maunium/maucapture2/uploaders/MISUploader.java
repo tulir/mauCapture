@@ -9,29 +9,24 @@ import java.io.IOException;
 import java.util.Base64;
 
 import javax.imageio.ImageIO;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.maunium.maucapture2.util.ProgressStringBody;
+import net.maunium.maucapture2.util.ProgressStringEntity;
 
 public class MISUploader extends Uploader {
 	public MISUploader(JFrame host) {
@@ -57,14 +52,12 @@ public class MISUploader extends Uploader {
 		HttpPost post = new HttpPost("http://localhost:29300/insert");
 		
 		try {
-			MultipartEntityBuilder meb = MultipartEntityBuilder.create();
-			meb.seContentType(ContentType.APPLICATION_JSON);
-			meb.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-			meb.addPart("image", new ProgressStringBody(image, ContentType.TEXT_PLAIN, p));
-			meb.addPart("image-name", new StringBody("asdasdasd", ContentType.TEXT_PLAIN)); // TODO: Set image name
-			meb.addPart("username", new StringBody("tulir293", ContentType.TEXT_PLAIN)); // TODO: Set username
-			meb.addPart("auth-token", new StringBody(">>>", ContentType.TEXT_PLAIN)); // TODO: Set auth token
-			post.setEntity(meb.build());
+			JsonObject payload = new JsonObject();
+			payload.addProperty("image", image);
+			payload.addProperty("image-name", "asddsa");
+			payload.addProperty("username", "tulir293");
+			payload.addProperty("auth-token", "T9Jn655lryGglcYrz9Pmac/ls+EjokDLXNYWmIkZCkk");
+			post.setEntity(new ProgressStringEntity(new Gson().toJson(payload), ContentType.APPLICATION_JSON, p));
 			
 			HttpResponse httpresp = hc.execute(post, context);
 			
