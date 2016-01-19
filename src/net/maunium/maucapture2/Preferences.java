@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -21,7 +22,7 @@ import net.maunium.maucapture2.swing.JColorViewer;
 public class Preferences {
 	public static void colorSelector(MauCapture host) {
 		JDialog frame = new JDialog(host.getFrame(), "Color Selector");
-		frame.getContentPane().setPreferredSize(new Dimension(155, 145));
+		frame.getContentPane().setPreferredSize(new Dimension(155, 165));
 		frame.pack();
 		frame.setFont(MauCapture.lato);
 		frame.setLocationRelativeTo(host.getFrame());
@@ -38,7 +39,7 @@ public class Preferences {
 		Color c = host.getDrawPlate().getDrawColor();
 		JColorViewer jcv = new JColorViewer(c);
 		jcv.setLocation(120, 5);
-		jcv.setSize(30, 135);
+		jcv.setSize(30, 155);
 		jcv.setFont(MauCapture.lato);
 		
 		JTextField red = new JTextField(Integer.toString(c.getRed()));
@@ -116,8 +117,13 @@ public class Preferences {
 		size.addKeyListener(keyl);
 		size.setFont(MauCapture.lato);
 		
+		JCheckBox fill = new JCheckBox("Fill Shapes", host.getDrawPlate().getFill());
+		fill.setLocation(5, 110);
+		fill.setSize(110, 20);
+		fill.setFont(latoBold);
+		
 		JButton done = new JButton("Done");
-		done.setLocation(5, 110);
+		done.setLocation(5, 130);
 		done.setSize(110, 30);
 		done.setFont(MauCapture.lato);
 		done.addActionListener(new ActionListener() {
@@ -126,6 +132,7 @@ public class Preferences {
 				host.getDrawPlate().setDrawColor(new Color(Integer.parseInt("0" + red.getText()), Integer.parseInt("0" + green.getText()),
 						Integer.parseInt("0" + blue.getText()), Integer.parseInt("0" + opacity.getText())));
 				host.getDrawPlate().setDrawSize(Integer.parseInt(size.getText()));
+				host.getDrawPlate().setFill(fill.isSelected());
 				frame.setVisible(false);
 				frame.dispose();
 			}
@@ -142,6 +149,7 @@ public class Preferences {
 		frame.add(sizeL);
 		frame.add(size);
 		frame.add(done);
+		frame.add(fill);
 		frame.add(jcv);
 		frame.setVisible(true);
 	}

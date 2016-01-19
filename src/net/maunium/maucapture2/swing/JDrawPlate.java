@@ -286,6 +286,14 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		drawMode = dm;
 	}
 	
+	public void setFill(boolean fill) {
+		this.fill = fill;
+	}
+	
+	public boolean getFill() {
+		return fill;
+	}
+	
 	public DrawMode getDrawMode() {
 		return drawMode;
 	}
