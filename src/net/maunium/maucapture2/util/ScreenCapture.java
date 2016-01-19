@@ -50,10 +50,4 @@ public class ScreenCapture {
 			return null;
 		}
 	}
-	
-	/*
-	 * public static BufferedImage capture(Rectangle r) { BufferedImage bi; try { bi = new
-	 * Robot().createScreenCapture(r); } catch (AWTException e) { System.err.println( "Error capturing screen: ");
-	 * e.printStackTrace(); return null; } return bi; }
-	 */
 }
