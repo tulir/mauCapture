@@ -215,7 +215,7 @@ public class MauCapture {
 			if (evt.getActionCommand().equals("PREFS")) {
 			
 			} else if (evt.getActionCommand().equals("COLOR")) {
-				Preferences.colorSelector(MauCapture.this);
+				ColorSelector.colorSelector(MauCapture.this);
 			}
 		}
 	};

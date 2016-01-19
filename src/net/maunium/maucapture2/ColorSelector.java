@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 
 import net.maunium.maucapture2.swing.JColorViewer;
 
-public class Preferences {
+public class ColorSelector {
 	public static void colorSelector(MauCapture host) {
 		JDialog frame = new JDialog(host.getFrame(), "Color Selector");
 		frame.getContentPane().setPreferredSize(new Dimension(155, 165));
