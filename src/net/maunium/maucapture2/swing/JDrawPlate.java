@@ -136,19 +136,21 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	}
 	
 	private void drawCircle(Graphics g) {
-		if (fill) {
-			g.fillOval(clickStart.x, clickStart.y, clickEnd.x - clickStart.x, clickEnd.y - clickStart.y);
-		} else {
-			g.drawOval(clickStart.x, clickStart.y, clickEnd.x - clickStart.x, clickEnd.y - clickStart.y);
-		}
+		int xs = Math.min(clickStart.x, clickEnd.x);
+		int width = Math.max(clickStart.x, clickEnd.x) - xs;
+		int ys = Math.min(clickStart.y, clickEnd.y);
+		int height = Math.max(clickStart.y, clickEnd.y) - ys;
+		if (fill) g.fillOval(xs, ys, width, height);
+		else g.drawOval(xs, ys, width, height);
 	}
 	
 	private void drawRect(Graphics g) {
-		if (fill) {
-			g.fillRect(clickStart.x, clickStart.y, clickEnd.x - clickStart.x, clickEnd.y - clickStart.y);
-		} else {
-			g.drawRect(clickStart.x, clickStart.y, clickEnd.x - clickStart.x, clickEnd.y - clickStart.y);
-		}
+		int xs = Math.min(clickStart.x, clickEnd.x);
+		int width = Math.max(clickStart.x, clickEnd.x) - xs;
+		int ys = Math.min(clickStart.y, clickEnd.y);
+		int height = Math.max(clickStart.y, clickEnd.y) - ys;
+		if (fill) g.fillRect(xs, ys, width, height);
+		else g.drawRect(xs, ys, width, height);
 	}
 	
 	private void drawArrow(Graphics2D g) {
