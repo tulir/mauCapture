@@ -8,7 +8,14 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
@@ -19,6 +26,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.UIManager;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
 
 import net.maunium.maucapture2.swing.JDrawPlate;
 import net.maunium.maucapture2.uploaders.ImgurUploader;
@@ -33,6 +46,7 @@ import net.maunium.maucapture2.uploaders.Uploader;
  */
 public class MauCapture {
 	public static final Font lato = createLato();
+	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	
 	private JFrame frame;
 	private JButton capture, preferences/* , save, copy */, uploadMIS, uploadImgur, color, crop;
@@ -40,7 +54,7 @@ public class MauCapture {
 	private JPanel top, side;
 	private JDrawPlate jdp;
 	
-	private String username = "tulir293", authtoken = "ysBYpIgE+XzQQjPgKYnW9BNSFyN4eOAIxpqtqIOUEhw", url = "http://localhost:29300", password = "";
+	private String username = "", authtoken = "", url = "", password = "";
 	private boolean savePassword;
 	
 	public MauCapture() {
@@ -63,6 +77,17 @@ public class MauCapture {
 				preferences.setLocation(width - 48, 0);
 				uploadImgur.setLocation(width - 48 - 128, 0);
 				uploadMIS.setLocation(width - 48 - 128 - 128, 0);
+			}
+		});
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				try {
+					saveConfig();
+				} catch (IOException e1) {
+					System.err.println("Failed to save config:");
+					e1.printStackTrace();
+				}
 			}
 		});
 		frame.setLayout(null);
@@ -144,6 +169,37 @@ public class MauCapture {
 		frame.add(top);
 		frame.add(side);
 		frame.add(jdp);
+	}
+	
+	public void saveConfig() throws IOException {
+		JsonObject config = new JsonObject();
+		config.addProperty("username", username);
+		config.addProperty("authtoken", authtoken);
+		config.addProperty("address", url);
+		if (savePassword) config.addProperty("password", password);
+		config.addProperty("save-password", savePassword);
+		JsonWriter writer = new JsonWriter(new FileWriter(MauCapture.config));
+		Gson gson = new Gson();
+		gson.toJson(config, writer);
+		writer.close();
+	}
+	
+	public void loadConfig() throws FileNotFoundException {
+		if (!MauCapture.config.exists()) return;
+		JsonParser parser = new JsonParser();
+		JsonObject config = parser.parse(new FileReader(MauCapture.config)).getAsJsonObject();
+		JsonElement e;
+		
+		e = config.get("username");
+		if (e != null && e.isJsonPrimitive()) username = e.getAsString();
+		e = config.get("authtoken");
+		if (e != null && e.isJsonPrimitive()) authtoken = e.getAsString();
+		e = config.get("address");
+		if (e != null && e.isJsonPrimitive()) url = e.getAsString();
+		e = config.get("password");
+		if (e != null && e.isJsonPrimitive()) password = e.getAsString();
+		e = config.get("save-password");
+		if (e != null && e.isJsonPrimitive()) savePassword = e.getAsBoolean();
 	}
 	
 	/**
@@ -291,6 +347,10 @@ public class MauCapture {
 		return username;
 	}
 	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	public String login(String username, String password) {
 		String result = MISUploader.login(url, username, password);
 		if (!result.startsWith("err:")) {
@@ -304,13 +364,6 @@ public class MauCapture {
 		return authtoken;
 	}
 	
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable t) {}
-		Screenshot.takeScreenshot(new MauCapture());
-	}
-	
 	private static final Font createLato() {
 		try {
 			return Font.createFont(Font.TRUETYPE_FONT, MauCapture.class.getClassLoader().getResourceAsStream("assets/lato.ttf")).deriveFont(Font.PLAIN, 13f);
@@ -318,5 +371,19 @@ public class MauCapture {
 			t.printStackTrace();
 			return new Font(Font.SANS_SERIF, Font.PLAIN, 11);
 		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Throwable t) {}
+		MauCapture mc = new MauCapture();
+		try {
+			mc.loadConfig();
+		} catch (FileNotFoundException e) {
+			System.err.println("Failed to read config:");
+			e.printStackTrace();
+		}
+		Screenshot.takeScreenshot(mc);
 	}
 }
