@@ -111,6 +111,8 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 				clickStart = new Point(x, y);
 				break;
 			case ERASE:
+				x -= size / 2.0;
+				y -= size / 2.0;
 				g.setPaintMode();
 				BufferedImage sub = null;
 				
@@ -203,7 +205,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (drawMode == DrawMode.FREE || drawMode == DrawMode.ERASE) {
-			mouse(e.getX() - size / 2, e.getY() - size / 2);
+			mouse(e.getX(), e.getY());
 		} else {
 			clickStart = new Point(e.getX(), e.getY());
 		}
@@ -212,7 +214,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (drawMode == DrawMode.FREE || drawMode == DrawMode.ERASE) {
-			mouse(e.getX() - size / 2, e.getY() - size / 2);
+			mouse(e.getX(), e.getY());
 		} else if (drawMode != DrawMode.TEXT) {
 			clickEnd = new Point(e.getX(), e.getY());
 			repaint();
