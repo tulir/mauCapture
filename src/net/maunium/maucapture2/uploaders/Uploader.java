@@ -12,6 +12,12 @@ import javax.swing.JTextField;
 
 import net.maunium.maucapture2.MauCapture;
 
+/**
+ * The base for all uploaders.
+ * 
+ * @author Tulir293
+ * @since 2.0
+ */
 public abstract class Uploader {
 	protected JDialog frame;
 	protected JProgressBar p;
@@ -52,6 +58,9 @@ public abstract class Uploader {
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * Upload the given BufferedImage.
+	 */
 	public abstract void upload(BufferedImage bi);
 	
 	public static void upload(final Uploader u, final BufferedImage bi) {
