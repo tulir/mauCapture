@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -34,7 +35,7 @@ public class MISUploader extends Uploader {
 	
 	public MISUploader(JFrame host, String addr, String imageName, String username, String authtoken) {
 		super(host);
-		if (!addr.endsWith("/")) addr = addr + "/";
+		if (!addr.endsWith("/")) addr += "/";
 		this.addr = addr;
 		this.imageName = imageName;
 		this.username = username;
@@ -46,7 +47,8 @@ public class MISUploader extends Uploader {
 	public static String login(String addr, String username, String password) {
 		HttpClient hc = HttpClientBuilder.create().build();
 		HttpContext context = new BasicHttpContext();
-		HttpPost post = new HttpPost(addr + "insert");
+		if (!addr.endsWith("/")) addr += "/";
+		HttpPost post = new HttpPost(addr + "auth/login");
 		try {
 			JsonObject payload = new JsonObject();
 			payload.addProperty("username", username);
@@ -55,17 +57,19 @@ public class MISUploader extends Uploader {
 			
 			HttpResponse httpresp = hc.execute(post, context);
 			
+			if (httpresp.getStatusLine().getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) return "err:servererror";
+			
 			JsonElement e = new JsonParser().parse(EntityUtils.toString(httpresp.getEntity()));
 			JsonObject main = e.getAsJsonObject();
 			JsonElement authToken = main.get("auth-token");
 			if (authToken != null) {
 				return authToken.getAsString();
 			} else {
-				return main.get("error").getAsString();
+				return "err:" + main.get("error-simple").getAsString();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "exception";
+			return "err:exception";
 		}
 	}
 	

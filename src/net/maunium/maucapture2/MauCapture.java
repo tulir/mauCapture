@@ -40,7 +40,8 @@ public class MauCapture {
 	private JPanel top, side;
 	private JDrawPlate jdp;
 	
-	private String username = "tulir293", authtoken = "ysBYpIgE+XzQQjPgKYnW9BNSFyN4eOAIxpqtqIOUEhw", url = "http://localhost:29300";
+	private String username = "tulir293", authtoken = "ysBYpIgE+XzQQjPgKYnW9BNSFyN4eOAIxpqtqIOUEhw", url = "http://localhost:29300", password = "";
+	private boolean savePassword;
 	
 	public MauCapture() {
 		frame = new JFrame("mauCapture 2.0");
@@ -145,14 +146,25 @@ public class MauCapture {
 		frame.add(jdp);
 	}
 	
+	/**
+	 * Create and configure a button.
+	 */
 	private JButton createButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
 		return configureButton(new JButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 	
+	/**
+	 * Create and configure a toggle button.
+	 */
 	private JToggleButton createToggleButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
 		return configureButton(new JToggleButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 	
+	/**
+	 * Configure the given button.
+	 * 
+	 * @return The given button.
+	 */
 	private <T extends AbstractButton> T configureButton(T button, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
 		button.setFont(lato);
 		button.setBorderPainted(false);
@@ -165,6 +177,9 @@ public class MauCapture {
 		return button;
 	}
 	
+	/**
+	 * Open the given buffered image in the MauCapture Editor.
+	 */
 	public void open(BufferedImage bi) {
 		jdp.setImageFully(bi);
 		jdp.setSize(bi.getWidth(), bi.getHeight());
@@ -173,6 +188,9 @@ public class MauCapture {
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * Action Listener for editing buttons (erase, text, arrow, etc)
+	 */
 	private ActionListener editors = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
@@ -188,6 +206,9 @@ public class MauCapture {
 		}
 	};
 	
+	/**
+	 * Action Listener for upload buttons.
+	 */
 	private ActionListener uploaders = new ActionListener() {
 		private Random r = new Random(System.nanoTime());
 		
@@ -209,17 +230,23 @@ public class MauCapture {
 		}
 	};
 	
+	/**
+	 * Action Listener for the preferences and color buttons.
+	 */
 	private ActionListener settings = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (evt.getActionCommand().equals("PREFS")) {
-			
+				Preferences.preferences(MauCapture.this);
 			} else if (evt.getActionCommand().equals("COLOR")) {
 				ColorSelector.colorSelector(MauCapture.this);
 			}
 		}
 	};
 	
+	/**
+	 * Get an icon from the assets.
+	 */
 	private ImageIcon getIcon(String path) {
 		path = "assets/" + path;
 		URL url = MauCapture.class.getClassLoader().getResource(path);
@@ -234,6 +261,47 @@ public class MauCapture {
 	
 	public JDrawPlate getDrawPlate() {
 		return jdp;
+	}
+	
+	public String getAddress() {
+		return url;
+	}
+	
+	public void setAddress(String url) {
+		this.url = url;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public boolean savePassword() {
+		return savePassword;
+	}
+	
+	public void setSavePassword(boolean savePassword) {
+		this.savePassword = savePassword;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public String login(String username, String password) {
+		String result = MISUploader.login(url, username, password);
+		if (!result.startsWith("err:")) {
+			authtoken = result;
+			this.username = username;
+			return "success";
+		} else return result;
+	}
+	
+	public String getAuthToken() {
+		return authtoken;
 	}
 	
 	public static void main(String[] args) {
