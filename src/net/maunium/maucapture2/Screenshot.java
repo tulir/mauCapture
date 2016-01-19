@@ -1,10 +1,6 @@
 package net.maunium.maucapture2;
 
-import java.awt.AWTException;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -12,6 +8,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 import net.maunium.maucapture2.swing.JSelectableImage;
+import net.maunium.maucapture2.util.ScreenCapture;
 
 public class Screenshot {
 	public static void takeScreenshot(MauCapture host) {
@@ -22,30 +19,12 @@ public class Screenshot {
 		frame.requestFocus();
 		frame.setLayout(null);
 		
-		Rectangle capture = null;
-		for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
-			Rectangle r = gd.getDefaultConfiguration().getBounds();
-			if (capture == null) capture = r;
-			else capture = capture.union(r);
-		}
-		
-		if (capture == null) {
-			System.err.println("No screens found!");
-			return;
-		}
-		frame.setBounds(capture);
-		
-		BufferedImage bi;
-		try {
-			bi = new Robot().createScreenCapture(capture);
-		} catch (AWTException e) {
-			System.err.println("Error capturing screen: ");
-			e.printStackTrace();
-			return;
-		}
+		Rectangle r = ScreenCapture.screen();
+		BufferedImage bi = ScreenCapture.capture(r);
+		frame.setBounds(r);
 		
 		JSelectableImage si = new JSelectableImage(bi);
-		si.setSize(capture.width, capture.height);
+		si.setSize(r.width, r.height);
 		si.setLocation(0, 0);
 		si.addMouseListener(new MouseListener() {
 			@Override
