@@ -93,8 +93,10 @@ public class MISUploader extends Uploader {
 			JsonObject payload = new JsonObject();
 			payload.addProperty("image", image);
 			payload.addProperty("image-name", imageName);
-			payload.addProperty("username", username);
-			payload.addProperty("auth-token", authtoken);
+			if (username.length() > 0 && authtoken.length() > 0) {
+				payload.addProperty("username", username);
+				payload.addProperty("auth-token", authtoken);
+			}
 			post.setEntity(new ProgressStringEntity(new Gson().toJson(payload), ContentType.APPLICATION_JSON, p));
 			
 			HttpResponse httpresp = hc.execute(post, context);
@@ -113,9 +115,9 @@ public class MISUploader extends Uploader {
 				p.setIndeterminate(false);
 				p.setString("All done in " + (System.currentTimeMillis() - st) / 1000 + " seconds!");
 				address.setText(url);
-			} else JOptionPane.showMessageDialog(frame,
-					"Error message: " + main.get("status-humanreadable") + "\nHTTP Status code " + httpresp.getStatusLine().getStatusCode(), "Upload failed",
-					JOptionPane.ERROR_MESSAGE);
+			} else
+				JOptionPane.showMessageDialog(frame, "HTTP " + httpresp.getStatusLine().getStatusCode() + ": " + main.get("status-humanreadable").getAsString(),
+						"Upload failed", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
