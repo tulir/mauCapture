@@ -60,6 +60,8 @@ public class MauCapture {
 	public MauCapture() {
 		frame = new JFrame("mauCapture 2.0");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setIconImage(getIcon("maucapture.png").getImage());
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent evt) {
