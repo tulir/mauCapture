@@ -54,17 +54,28 @@ import net.maunium.maucapture2.util.TransferableImage;
  * @since 2.0
  */
 public class MauCapture {
+	/** The Random instance used to generate image names */
 	private Random r = new Random(System.nanoTime());
+	/** Main font of MauCapture */
 	public static final Font lato = createLato();
+	/** Configuration path */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
+	/** Version string */
 	public static final String version = "2.0", versionFull = "2.0.0_B4";
+	/** Main frame */
 	private JFrame frame;
+	/** Non-toggle button */
 	private JButton capture, preferences, uploadMIS, uploadImgur, color;
+	/** Togglebutton (editing) */
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase, crop;
+	/** Button panel */
 	private JPanel top, side;
+	/** Drawing area */
 	private JDrawPlate jdp;
 	
+	/** Config value */
 	private String username = "", authtoken = "", url = "", password = "", saveLocation = System.getProperty("user.home");
+	/** Config value */
 	private boolean savePassword;
 	
 	public MauCapture() {
@@ -72,6 +83,10 @@ public class MauCapture {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(getIcon("maucapture.png").getImage());
+		/*
+		 * Add component listener for changing sizes of the button panels and locations of the
+		 * buttons on the right side of the top panel.
+		 */
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent evt) {
@@ -91,6 +106,9 @@ public class MauCapture {
 				uploadMIS.setLocation(width - 48 - 2 * 144, 0);
 			}
 		});
+		/*
+		 * Add window listener to save config before closing.
+		 */
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -102,9 +120,18 @@ public class MauCapture {
 				}
 			}
 		});
+		/* @mauformat=off
+		 * Add application-wide key listener for keybinds
+		 * 	CTRL+S - Save image to disk
+		 *  CTRL+C - Copy image to clipboard
+		 *  CTRL+I - Import image from disk
+		 *  Escape - Quit MauCapture
+		 * @mauformat=on
+		 */
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
+				// Ignore all non-keydown events.
 				if (e.getID() != KeyEvent.KEY_PRESSED) return false;
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					frame.dispose();
@@ -337,12 +364,16 @@ public class MauCapture {
 		private MouseAdapter siMouse = new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				// Make sure the cropped area is big enough.
 				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
+					// Area is big enough. Set it as the image for the drawplate.
 					jdp.setImage(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
+					// Deselect the crop mode button.
 					crop.setSelected(false);
+					// Exit cropping mode.
 					exitCrop();
-					jdp.repaint();
 				} else {
+					// Area too small. Reset selection.
 					si.xs = Integer.MIN_VALUE;
 					si.xe = Integer.MIN_VALUE;
 					si.ys = Integer.MIN_VALUE;
@@ -353,10 +384,13 @@ public class MauCapture {
 		};
 		
 		private void enterCrop() {
+			// Create a cropping pane with the image from the drawplate.
 			si = new JSelectableImage(jdp.getImage());
 			si.setSize(jdp.getImage().getWidth(), jdp.getImage().getHeight());
-			si.addMouseListener(siMouse);
 			si.setLocation(48, 48);
+			// Add a mouse listener to detect when cropping is finished.
+			si.addMouseListener(siMouse);
+			// Disable all other editing buttons.
 			color.setEnabled(false);
 			arrow.setEnabled(false);
 			rectangle.setEnabled(false);
@@ -364,14 +398,18 @@ public class MauCapture {
 			pencil.setEnabled(false);
 			text.setEnabled(false);
 			erase.setEnabled(false);
+			// Remove the drawplate and add the cropping pane.
 			frame.remove(jdp);
 			frame.add(si);
+			// Repaint the frame to make sure all changes are visible.
 			frame.repaint();
 		}
 		
 		private void exitCrop() {
+			// Remove the cropping pane and re-add the drawplate.
 			frame.remove(si);
 			frame.add(jdp);
+			// Enable all other editing buttons.
 			color.setEnabled(true);
 			arrow.setEnabled(true);
 			rectangle.setEnabled(true);
@@ -380,6 +418,7 @@ public class MauCapture {
 			text.setEnabled(true);
 			erase.setEnabled(true);
 			si = null;
+			// Repaint the frame to make sure all changes are visible.
 			frame.repaint();
 		}
 	};
@@ -409,46 +448,81 @@ public class MauCapture {
 		return null;
 	}
 	
+	/**
+	 * Get the main frame.
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}
 	
+	/**
+	 * Get the drawing plate.
+	 */
 	public JDrawPlate getDrawPlate() {
 		return jdp;
 	}
 	
+	/**
+	 * Get the mauImageServer address.
+	 */
 	public String getAddress() {
 		return url;
 	}
 	
+	/**
+	 * Set the mauImageServer address.
+	 */
 	public void setAddress(String url) {
 		this.url = url;
 	}
 	
+	/**
+	 * Set the saved password.
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 	
+	/**
+	 * Get the saved password.
+	 */
 	public String getPassword() {
 		return password;
 	}
 	
+	/**
+	 * Get whether or not the password should be saved.
+	 */
 	public boolean savePassword() {
 		return savePassword;
 	}
 	
+	/**
+	 * Set whether or not the password should be saved.
+	 */
 	public void setSavePassword(boolean savePassword) {
 		this.savePassword = savePassword;
 	}
 	
+	/**
+	 * Get the username that should be used for MIS authentication.
+	 */
 	public String getUsername() {
 		return username;
 	}
 	
+	/**
+	 * Set the username that should be used for MIS authentication.
+	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 	
+	/**
+	 * Try to log in to the configured MIS server using the given username and password.
+	 * 
+	 * @return The authentication token, or a simple error word with "{@code err:}" as the prefix.
+	 */
 	public String login(String username, String password) {
 		String result = MISUploader.login(url, username, password);
 		if (!result.startsWith("err:")) {
@@ -458,26 +532,42 @@ public class MauCapture {
 		} else return result;
 	}
 	
+	/**
+	 * Get the saved authentication token.
+	 */
 	public String getAuthToken() {
 		return authtoken;
 	}
 	
+	/**
+	 * Get the directory which will be open at first when saving (or importing) images to disk.
+	 */
 	public String getSaveLocation() {
 		return saveLocation;
 	}
 	
+	/**
+	 * Set the directory which will be open at first when saving (or importing) images to disk.
+	 */
 	public void setSaveLocation(String saveLocation) {
 		this.saveLocation = saveLocation;
 	}
 	
+	private final char[] randomizeAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+	
+	/**
+	 * Generate a random string matching the regex [a-zA-Z0-9]{{@code chars}}
+	 */
 	private String randomize(int chars) {
-		char[] allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < chars; i++)
-			sb.append(allowed[r.nextInt(allowed.length)]);
+			sb.append(randomizeAllowed[r.nextInt(randomizeAllowed.length)]);
 		return sb.toString();
 	}
 	
+	/**
+	 * Loads assets/lato.ttf and returns it as an AWT font.
+	 */
 	private static final Font createLato() {
 		try {
 			return Font.createFont(Font.TRUETYPE_FONT, MauCapture.class.getClassLoader().getResourceAsStream("assets/lato.ttf")).deriveFont(Font.PLAIN, 13f);
@@ -488,16 +578,20 @@ public class MauCapture {
 	}
 	
 	public static void main(String[] args) {
+		// Use native L&F
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Throwable t) {}
+		// Create a MauCapture instance.
 		MauCapture mc = new MauCapture();
 		try {
+			// Load config.
 			mc.loadConfig();
 		} catch (FileNotFoundException e) {
 			System.err.println("Failed to read config:");
 			e.printStackTrace();
 		}
+		// Open the screen grabbing view
 		Screenshot.takeScreenshot(mc);
 	}
 }
