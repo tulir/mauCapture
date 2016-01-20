@@ -258,10 +258,6 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	
 	public void setImage(BufferedImage bi) {
 		this.bi = bi;
-	}
-	
-	public void setImageFully(BufferedImage bi) {
-		this.bi = bi;
 		original = deepCopy(bi);
 	}
 	

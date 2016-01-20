@@ -281,7 +281,7 @@ public class MauCapture {
 	 * Open the given buffered image in the MauCapture Editor.
 	 */
 	public void open(BufferedImage bi) {
-		jdp.setImageFully(bi);
+		jdp.setImage(bi);
 		jdp.setSize(bi.getWidth(), bi.getHeight());
 		frame.getContentPane().setPreferredSize(new Dimension(bi.getWidth() + 48, bi.getHeight() + 48));
 		frame.pack();
@@ -336,7 +336,7 @@ public class MauCapture {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
-					jdp.setImageFully(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
+					jdp.setImage(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
 					crop.setSelected(false);
 					exitCrop();
 					jdp.repaint();
