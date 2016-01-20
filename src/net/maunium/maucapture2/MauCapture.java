@@ -244,6 +244,8 @@ public class MauCapture {
 		if (e != null && e.isJsonPrimitive()) password = e.getAsString();
 		e = config.get("save-password");
 		if (e != null && e.isJsonPrimitive()) savePassword = e.getAsBoolean();
+		e = config.get("save-location");
+		if (e != null && e.isJsonPrimitive()) saveLocation = e.getAsString();
 	}
 	
 	/**
