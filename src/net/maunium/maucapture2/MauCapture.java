@@ -12,6 +12,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -39,6 +41,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 
 import net.maunium.maucapture2.swing.JDrawPlate;
+import net.maunium.maucapture2.swing.JSelectableImage;
 import net.maunium.maucapture2.uploaders.ImgurUploader;
 import net.maunium.maucapture2.uploaders.MISUploader;
 import net.maunium.maucapture2.uploaders.Uploader;
@@ -56,8 +59,8 @@ public class MauCapture {
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	public static final String version = "2.0", versionFull = "2.0.0_B2";
 	private JFrame frame;
-	private JButton capture, preferences, uploadMIS, uploadImgur, color, crop;
-	private JToggleButton arrow, rectangle, circle, pencil, text, erase;
+	private JButton capture, preferences, uploadMIS, uploadImgur, color;
+	private JToggleButton arrow, rectangle, circle, pencil, text, erase, crop;
 	private JPanel top, side;
 	private JDrawPlate jdp;
 	
@@ -173,7 +176,7 @@ public class MauCapture {
 		pencil.setSelected(true);
 		text = createToggleButton("text.png", 48, 48, 0, 5 * 48, "Write text", editors, "TEXT");
 		erase = createToggleButton("eraser.png", 48, 48, 0, 6 * 48, "Eraser", editors, "ERASE");
-		crop = createButton("crop.png", 48, 48, 0, 7 * 48, "Crop the image", null, "CROP");
+		crop = createToggleButton("crop.png", 48, 48, 0, 7 * 48, "Crop the image", cropListener, "CROP");
 		
 		jdp = new JDrawPlate(null);
 		jdp.setLocation(48, 48);
@@ -314,6 +317,67 @@ public class MauCapture {
 			} else if (evt.getActionCommand().equals("IMGUR")) {
 				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
 			}
+		}
+	};
+	
+	/**
+	 * Cropping
+	 */
+	private ActionListener cropListener = new ActionListener() {
+		private JSelectableImage si;
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (crop.isSelected()) enterCrop();
+			else exitCrop();
+		}
+		
+		private MouseAdapter siMouse = new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
+					jdp.setImage(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
+					crop.setSelected(false);
+					exitCrop();
+					jdp.repaint();
+				} else {
+					si.xs = Integer.MIN_VALUE;
+					si.xe = Integer.MIN_VALUE;
+					si.ys = Integer.MIN_VALUE;
+					si.ye = Integer.MIN_VALUE;
+					si.repaint();
+				}
+			}
+		};
+		
+		private void enterCrop() {
+			si = new JSelectableImage(jdp.getImage());
+			si.setSize(jdp.getImage().getWidth(), jdp.getImage().getHeight());
+			si.addMouseListener(siMouse);
+			si.setLocation(48, 48);
+			si.repaint();
+			color.setEnabled(false);
+			arrow.setEnabled(false);
+			rectangle.setEnabled(false);
+			circle.setEnabled(false);
+			pencil.setEnabled(false);
+			text.setEnabled(false);
+			erase.setEnabled(false);
+			frame.remove(jdp);
+			frame.add(si);
+		}
+		
+		private void exitCrop() {
+			frame.remove(si);
+			frame.add(jdp);
+			color.setEnabled(true);
+			arrow.setEnabled(true);
+			rectangle.setEnabled(true);
+			circle.setEnabled(true);
+			pencil.setEnabled(true);
+			text.setEnabled(true);
+			erase.setEnabled(true);
+			si = null;
 		}
 	};
 	
