@@ -8,8 +8,13 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
+/**
+ * A simple Transferable implementation to allow copying images to the clipboard.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class TransferableImage implements Transferable, ClipboardOwner {
-	
 	private Image i;
 	
 	public TransferableImage(Image i) {
@@ -34,7 +39,7 @@ public class TransferableImage implements Transferable, ClipboardOwner {
 		DataFlavor[] flavors = getTransferDataFlavors();
 		for (int i = 0; i < flavors.length; i++)
 			if (flavor.equals(flavors[i])) return true;
-		
+			
 		return false;
 	}
 	

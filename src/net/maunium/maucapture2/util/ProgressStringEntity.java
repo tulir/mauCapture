@@ -10,6 +10,12 @@ import javax.swing.JProgressBar;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 
+/**
+ * A StringEntity extension that supports progress bars.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class ProgressStringEntity extends StringEntity {
 	private JProgressBar progress;
 	

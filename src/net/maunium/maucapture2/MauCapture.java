@@ -48,10 +48,10 @@ import net.maunium.maucapture2.uploaders.Uploader;
 import net.maunium.maucapture2.util.TransferableImage;
 
 /**
- * MauCapture 2.0 main class.
+ * MauCapture 2 main class.
  * 
  * @author Tulir293
- * @since 2.0
+ * @since 2.0.0
  */
 public class MauCapture {
 	/** The Random instance used to generate image names */
