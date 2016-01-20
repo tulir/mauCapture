@@ -336,7 +336,7 @@ public class MauCapture {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
-					jdp.setImage(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
+					jdp.setImageFully(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
 					crop.setSelected(false);
 					exitCrop();
 					jdp.repaint();
