@@ -10,6 +10,12 @@ import javax.swing.JFrame;
 import net.maunium.maucapture2.swing.JSelectableImage;
 import net.maunium.maucapture2.util.ScreenCapture;
 
+/**
+ * Contains code for taking screenshots.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class Screenshot {
 	public static JFrame frame;
 	

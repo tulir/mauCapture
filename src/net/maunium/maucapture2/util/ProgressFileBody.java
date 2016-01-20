@@ -10,6 +10,12 @@ import javax.swing.JProgressBar;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.util.Args;
 
+/**
+ * A FileBody extension that supports progress bars.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class ProgressFileBody extends FileBody {
 	private JProgressBar progress;
 	
@@ -31,8 +37,8 @@ public class ProgressFileBody extends FileBody {
 			int l;
 			while ((l = in.read(tmp)) != -1) {
 				progress.setValue(progress.getValue() + l);
-				progress.setString("Uploading - " + (int) (progress.getValue() * 100.0f / progress.getMaximum()) + "% - " + (System.currentTimeMillis() - st)
-						/ 1000 + "s");
+				progress.setString("Uploading - " + (int) (progress.getValue() * 100.0f / progress.getMaximum()) + "% - "
+						+ (System.currentTimeMillis() - st) / 1000 + "s");
 				out.write(tmp, 0, l);
 			}
 			out.flush();

@@ -9,7 +9,7 @@ import javax.swing.JComponent;
  * JColorViewer fills the whole area for the component with the set color.
  * 
  * @author Tulir293
- * @since 2.0
+ * @since 2.0.0
  */
 public class JColorViewer extends JComponent {
 	private static final long serialVersionUID = 1L;

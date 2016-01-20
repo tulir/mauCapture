@@ -15,6 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * Contains a method that opens the MIS settings dialog.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class Preferences {
 	public static void preferences(MauCapture host) {
 		JDialog frame = new JDialog(host.getFrame(), "MIS Settings");

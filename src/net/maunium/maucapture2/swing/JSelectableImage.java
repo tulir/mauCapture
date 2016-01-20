@@ -9,6 +9,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+/**
+ * A component that displays a slightly grayed image which can be selected.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class JSelectableImage extends JComponent implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	

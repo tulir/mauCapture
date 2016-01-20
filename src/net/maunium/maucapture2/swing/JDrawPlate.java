@@ -18,7 +18,7 @@ import javax.swing.JComponent;
  * JDrawPlate is an image viewer with basic editing capabilities.
  * 
  * @author Tulir293
- * @since 2.0
+ * @since 2.0.0
  */
 public class JDrawPlate extends JComponent implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;

@@ -16,7 +16,7 @@ import net.maunium.maucapture2.MauCapture;
  * The base for all uploaders.
  * 
  * @author Tulir293
- * @since 2.0
+ * @since 2.0.0
  */
 public abstract class Uploader {
 	protected JDialog frame;

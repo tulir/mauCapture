@@ -30,6 +30,12 @@ import com.google.gson.JsonParser;
 
 import net.maunium.maucapture2.util.ProgressStringEntity;
 
+/**
+ * An Uploader implementation for mauImageServer 2.0
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class MISUploader extends Uploader {
 	private String addr, imageName, username, authtoken;
 	

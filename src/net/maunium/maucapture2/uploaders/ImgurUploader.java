@@ -29,6 +29,12 @@ import com.google.gson.JsonParser;
 
 import net.maunium.maucapture2.util.ProgressFileBody;
 
+/**
+ * An Uploader implementation for Imgur.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class ImgurUploader extends Uploader {
 	public ImgurUploader(JFrame host) {
 		super(host);

@@ -10,6 +10,12 @@ import javax.swing.UIManager;
 
 import net.maunium.maucapture2.util.FileNameExtensionFilter;
 
+/**
+ * Saving and importing images.
+ * 
+ * @author Tulir293
+ * @since 2.0.0
+ */
 public class FileManager {
 	public static void save(MauCapture host) {
 		defaultLAF();
