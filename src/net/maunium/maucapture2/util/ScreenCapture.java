@@ -1,13 +1,11 @@
 package net.maunium.maucapture2.util;
 
+import java.awt.AWTException;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.Java2DFrameConverter;;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;;
 
 public class ScreenCapture {
 	public static Rectangle screen() {
@@ -26,27 +24,11 @@ public class ScreenCapture {
 	}
 	
 	public static BufferedImage capture(Rectangle r) {
-		// If !linux
-//		try {
-//			return new Robot().createScreenCapture(r);
-//		} catch (AWTException e) {
-//			System.err.println("Error capturing screen: ");
-//			e.printStackTrace();
-//			return null;
-//		}
-		// else
 		try {
-			FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(":0.0+" + r.x + "," + r.y);
-			grabber.setFormat("x11grab");
-			grabber.setImageWidth(r.width);
-			grabber.setImageHeight(r.height);
-			grabber.start();
-			Java2DFrameConverter jfc = new Java2DFrameConverter();
-			BufferedImage bi = jfc.convert(grabber.grab());
-			grabber.stop();
-			return bi;
-		} catch (FrameGrabber.Exception ex) {
-			ex.printStackTrace();
+			return new Robot().createScreenCapture(r);
+		} catch (AWTException e) {
+			System.err.println("Error capturing screen: ");
+			e.printStackTrace();
 			return null;
 		}
 	}
