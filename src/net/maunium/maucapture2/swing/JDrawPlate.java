@@ -309,7 +309,7 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 		g.setColor(color);
 		g.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g.setFont(getFont().deriveFont(size * 1.5f));
+		g.setFont(getFont().deriveFont(size));
 	}
 	
 	/*
