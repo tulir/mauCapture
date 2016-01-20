@@ -6,16 +6,19 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import net.maunium.maucapture2.util.FileNameExtensionFilter;
 
 public class FileManager {
 	public static void save(MauCapture host) {
+		defaultLAF();
 		JFileChooser file = new JFileChooser(host.getSaveLocation());
 		file.setFont(MauCapture.lato);
 		file.setFileFilter(new FileNameExtensionFilter("File types supported by ImageIO", ImageIO.getWriterFileSuffixes()));
 		file.setAcceptAllFileFilterUsed(false);
 		int status = file.showSaveDialog(host.getFrame());
+		systemLAF();
 		if (status == JFileChooser.APPROVE_OPTION) {
 			File f = file.getSelectedFile();
 			String extension;
@@ -33,15 +36,16 @@ public class FileManager {
 						"Save failed", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		
 		host.setSaveLocation(file.getCurrentDirectory().getAbsolutePath());
 	}
 	
 	public static void load(MauCapture host) {
+		defaultLAF();
 		JFileChooser file = new JFileChooser(host.getSaveLocation());
 		file.setFileFilter(new FileNameExtensionFilter("File types supported by ImageIO", ImageIO.getReaderFileSuffixes()));
 		file.setAcceptAllFileFilterUsed(false);
 		int status = file.showOpenDialog(host.getFrame());
+		systemLAF();
 		if (status == JFileChooser.APPROVE_OPTION) {
 			File f = file.getSelectedFile();
 			
@@ -54,5 +58,17 @@ public class FileManager {
 		}
 		
 		host.setSaveLocation(file.getCurrentDirectory().getAbsolutePath());
+	}
+	
+	private static void defaultLAF() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (Throwable t) {}
+	}
+	
+	private static void systemLAF() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Throwable t) {}
 	}
 }
