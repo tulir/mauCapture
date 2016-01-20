@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Commons Logging"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GSon"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/HttpClient"/>
-	<classpathentry kind="lib" path="/home/tulir/Programming/Java/MauCapture2/lib/javacv.jar"/>
+	<classpathentry kind="lib" path="lib/javacv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
