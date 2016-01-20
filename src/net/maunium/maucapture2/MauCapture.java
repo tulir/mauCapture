@@ -47,6 +47,7 @@ import net.maunium.maucapture2.uploaders.Uploader;
 public class MauCapture {
 	public static final Font lato = createLato();
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
+	public static final String version = "2.0";
 	
 	private JFrame frame;
 	private JButton capture, preferences/* , save, copy */, uploadMIS, uploadImgur, color, crop;
@@ -58,7 +59,7 @@ public class MauCapture {
 	private boolean savePassword;
 	
 	public MauCapture() {
-		frame = new JFrame("mauCapture 2.0");
+		frame = new JFrame("mauCapture " + version);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(getIcon("maucapture.png").getImage());
