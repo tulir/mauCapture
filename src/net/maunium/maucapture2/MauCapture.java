@@ -57,7 +57,7 @@ public class MauCapture {
 	private Random r = new Random(System.nanoTime());
 	public static final Font lato = createLato();
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
-	public static final String version = "2.0", versionFull = "2.0.0_B3";
+	public static final String version = "2.0", versionFull = "2.0.0_B4";
 	private JFrame frame;
 	private JButton capture, preferences, uploadMIS, uploadImgur, color;
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase, crop;
@@ -244,6 +244,8 @@ public class MauCapture {
 		if (e != null && e.isJsonPrimitive()) password = e.getAsString();
 		e = config.get("save-password");
 		if (e != null && e.isJsonPrimitive()) savePassword = e.getAsBoolean();
+		e = config.get("save-location");
+		if (e != null && e.isJsonPrimitive()) saveLocation = e.getAsString();
 	}
 	
 	/**
@@ -281,7 +283,7 @@ public class MauCapture {
 	 * Open the given buffered image in the MauCapture Editor.
 	 */
 	public void open(BufferedImage bi) {
-		jdp.setImageFully(bi);
+		jdp.setImage(bi);
 		jdp.setSize(bi.getWidth(), bi.getHeight());
 		frame.getContentPane().setPreferredSize(new Dimension(bi.getWidth() + 48, bi.getHeight() + 48));
 		frame.pack();
@@ -355,7 +357,6 @@ public class MauCapture {
 			si.setSize(jdp.getImage().getWidth(), jdp.getImage().getHeight());
 			si.addMouseListener(siMouse);
 			si.setLocation(48, 48);
-			si.repaint();
 			color.setEnabled(false);
 			arrow.setEnabled(false);
 			rectangle.setEnabled(false);
@@ -365,6 +366,7 @@ public class MauCapture {
 			erase.setEnabled(false);
 			frame.remove(jdp);
 			frame.add(si);
+			frame.repaint();
 		}
 		
 		private void exitCrop() {
@@ -378,6 +380,7 @@ public class MauCapture {
 			text.setEnabled(true);
 			erase.setEnabled(true);
 			si = null;
+			frame.repaint();
 		}
 	};
 	
