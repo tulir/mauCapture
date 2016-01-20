@@ -54,7 +54,7 @@ public class MauCapture {
 	private Random r = new Random(System.nanoTime());
 	public static final Font lato = createLato();
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
-	public static final String version = "2.0";
+	public static final String version = "2.0", versionFull = "2.0.0_B1";
 	
 	private JFrame frame;
 	private JButton capture, preferences, uploadMIS, uploadImgur, color, crop;
