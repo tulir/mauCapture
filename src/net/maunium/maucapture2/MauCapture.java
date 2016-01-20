@@ -2,6 +2,8 @@ package net.maunium.maucapture2;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
@@ -49,17 +51,18 @@ import net.maunium.maucapture2.util.TransferableImage;
  * @since 2.0
  */
 public class MauCapture {
+	private Random r = new Random(System.nanoTime());
 	public static final Font lato = createLato();
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	public static final String version = "2.0";
 	
 	private JFrame frame;
-	private JButton capture, preferences, save, copy, uploadMIS, uploadImgur, color, crop;
+	private JButton capture, preferences, uploadMIS, uploadImgur, color, crop;
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase;
 	private JPanel top, side;
 	private JDrawPlate jdp;
 	
-	private String username = "", authtoken = "", url = "", password = "";
+	private String username = "", authtoken = "", url = "", password = "", saveLocation = System.getProperty("user.home");
 	private boolean savePassword;
 	
 	public MauCapture() {
@@ -82,10 +85,8 @@ public class MauCapture {
 				side.setSize(48, height);
 				
 				preferences.setLocation(width - 48, 0);
-				uploadImgur.setLocation(width - 1 * 48 - 1 * 128, 0);
-				uploadMIS.setLocation(width - 1 * 48 - 2 * 128, 0);
-				save.setLocation(width - 2 * 48 - 2 * 128, 0);
-				copy.setLocation(width - 3 * 48 - 2 * 128, 0);
+				uploadImgur.setLocation(width - 48 - 1 * 128, 0);
+				uploadMIS.setLocation(width - 48 - 2 * 128, 0);
 			}
 		});
 		frame.addWindowListener(new WindowAdapter() {
@@ -97,6 +98,31 @@ public class MauCapture {
 					System.err.println("Failed to save config:");
 					e1.printStackTrace();
 				}
+			}
+		});
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() != KeyEvent.KEY_PRESSED) return false;
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					frame.dispose();
+					System.exit(0);
+					return true;
+				}
+				if (!e.isControlDown() || e.isAltDown() || e.isShiftDown()) return false;
+				if (e.getKeyCode() == KeyEvent.VK_S && jdp.getImage() != null) {
+					FileManager.save(MauCapture.this);
+				} else if (e.getKeyCode() == KeyEvent.VK_I) {
+					FileManager.load(MauCapture.this);
+				} else if (e.getKeyCode() == KeyEvent.VK_C && jdp.getImage() != null) {
+					Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+					TransferableImage timg = new TransferableImage(jdp.getImage());
+					c.setContents(timg, timg);
+					JOptionPane.showMessageDialog(getFrame(), "The image has been copied to your clipboard.", "Image copied", JOptionPane.INFORMATION_MESSAGE);
+				} else if (e.getKeyCode() == KeyEvent.VK_U) {
+					Uploader.upload(new MISUploader(getFrame(), url, randomize(5), username, authtoken), jdp.getImage());
+				} else return false;
+				return true;
 			}
 		});
 		frame.setLayout(null);
@@ -130,8 +156,6 @@ public class MauCapture {
 		uploadMIS.setText("MIS Upload");
 		uploadImgur = createButton("imgur.png", 128, 48, 0, 0, "Upload to Imgur", export, "IMGUR");
 		uploadImgur.setText("Imgur Upload");
-		save = createButton("save.png", 48, 48, 0, 0, "Save to disk", export, "SAVE");
-		copy = createButton("copy.png", 48, 48, 0, 0, "Copy to clipboard", export, "COPY");
 		
 		color = createButton("color.png", 48, 48, 0, 0 * 48, "Change draw/text color", settings, "COLOR");
 		arrow = createToggleButton("arrow.png", 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
@@ -162,8 +186,6 @@ public class MauCapture {
 		
 		top.add(capture);
 		top.add(preferences);
-		top.add(save);
-		top.add(copy);
 		top.add(uploadMIS);
 		top.add(uploadImgur);
 		
@@ -189,6 +211,7 @@ public class MauCapture {
 		if (savePassword) config.addProperty("password", password);
 		config.addProperty("save-password", savePassword);
 		JsonWriter writer = new JsonWriter(new FileWriter(MauCapture.config));
+		config.addProperty("save-location", saveLocation);
 		Gson gson = new Gson();
 		gson.toJson(config, writer);
 		writer.close();
@@ -276,30 +299,13 @@ public class MauCapture {
 	 * Action Listener for exporting buttons.
 	 */
 	private ActionListener export = new ActionListener() {
-		private Random r = new Random(System.nanoTime());
-		
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (evt.getActionCommand().equals("MIS")) {
 				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), username, authtoken), jdp.getImage());
 			} else if (evt.getActionCommand().equals("IMGUR")) {
 				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
-			} else if (evt.getActionCommand().equals("SAVE")) {
-			
-			} else if (evt.getActionCommand().equals("COPY")) {
-				Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
-				TransferableImage timg = new TransferableImage(jdp.getImage());
-				c.setContents(timg, timg);
-				JOptionPane.showMessageDialog(getFrame(), "The image has been copied to your clipboard.", "Image copied", JOptionPane.INFORMATION_MESSAGE);
 			}
-		}
-		
-		private String randomize(int chars) {
-			char[] allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < chars; i++)
-				sb.append(allowed[r.nextInt(allowed.length)]);
-			return sb.toString();
 		}
 	};
 	
@@ -379,6 +385,22 @@ public class MauCapture {
 	
 	public String getAuthToken() {
 		return authtoken;
+	}
+	
+	public String getSaveLocation() {
+		return saveLocation;
+	}
+	
+	public void setSaveLocation(String saveLocation) {
+		this.saveLocation = saveLocation;
+	}
+	
+	private String randomize(int chars) {
+		char[] allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < chars; i++)
+			sb.append(allowed[r.nextInt(allowed.length)]);
+		return sb.toString();
 	}
 	
 	private static final Font createLato() {
