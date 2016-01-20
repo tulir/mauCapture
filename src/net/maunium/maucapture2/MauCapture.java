@@ -2,6 +2,8 @@ package net.maunium.maucapture2;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -23,6 +25,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.UIManager;
@@ -37,6 +40,7 @@ import net.maunium.maucapture2.swing.JDrawPlate;
 import net.maunium.maucapture2.uploaders.ImgurUploader;
 import net.maunium.maucapture2.uploaders.MISUploader;
 import net.maunium.maucapture2.uploaders.Uploader;
+import net.maunium.maucapture2.util.TransferableImage;
 
 /**
  * MauCapture 2.0 main class.
@@ -122,12 +126,12 @@ public class MauCapture {
 		});
 		
 		preferences = createButton("preferences.png", 48, 48, 0, 0, "Preferences", settings, "PREFS");
-		uploadMIS = createButton("mauImageServer.png", 128, 48, 0, 0, "Upload to a mauImageServer", uploaders, "MIS");
+		uploadMIS = createButton("mauImageServer.png", 128, 48, 0, 0, "Upload to a mauImageServer", export, "MIS");
 		uploadMIS.setText("MIS Upload");
-		uploadImgur = createButton("imgur.png", 128, 48, 0, 0, "Upload to Imgur", uploaders, "IMGUR");
+		uploadImgur = createButton("imgur.png", 128, 48, 0, 0, "Upload to Imgur", export, "IMGUR");
 		uploadImgur.setText("Imgur Upload");
-		save = createButton("save.png", 48, 48, 0, 0, "Save to disk", null, "SAVE");
-		copy = createButton("copy.png", 48, 48, 0, 0, "Copy to clipboard", null, "COPY");
+		save = createButton("save.png", 48, 48, 0, 0, "Save to disk", export, "SAVE");
+		copy = createButton("copy.png", 48, 48, 0, 0, "Copy to clipboard", export, "COPY");
 		
 		color = createButton("color.png", 48, 48, 0, 0 * 48, "Change draw/text color", settings, "COLOR");
 		arrow = createToggleButton("arrow.png", 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
@@ -269,9 +273,9 @@ public class MauCapture {
 	};
 	
 	/**
-	 * Action Listener for upload buttons.
+	 * Action Listener for exporting buttons.
 	 */
-	private ActionListener uploaders = new ActionListener() {
+	private ActionListener export = new ActionListener() {
 		private Random r = new Random(System.nanoTime());
 		
 		@Override
@@ -280,6 +284,13 @@ public class MauCapture {
 				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), username, authtoken), jdp.getImage());
 			} else if (evt.getActionCommand().equals("IMGUR")) {
 				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
+			} else if (evt.getActionCommand().equals("SAVE")) {
+			
+			} else if (evt.getActionCommand().equals("COPY")) {
+				Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+				TransferableImage timg = new TransferableImage(jdp.getImage());
+				c.setContents(timg, timg);
+				JOptionPane.showMessageDialog(getFrame(), "The image has been copied to your clipboard.", "Image copied", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 		
