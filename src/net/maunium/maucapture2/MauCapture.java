@@ -355,7 +355,6 @@ public class MauCapture {
 			si.setSize(jdp.getImage().getWidth(), jdp.getImage().getHeight());
 			si.addMouseListener(siMouse);
 			si.setLocation(48, 48);
-			si.repaint();
 			color.setEnabled(false);
 			arrow.setEnabled(false);
 			rectangle.setEnabled(false);
@@ -365,6 +364,7 @@ public class MauCapture {
 			erase.setEnabled(false);
 			frame.remove(jdp);
 			frame.add(si);
+			frame.repaint();
 		}
 		
 		private void exitCrop() {
@@ -378,6 +378,7 @@ public class MauCapture {
 			text.setEnabled(true);
 			erase.setEnabled(true);
 			si = null;
+			frame.repaint();
 		}
 	};
 	
