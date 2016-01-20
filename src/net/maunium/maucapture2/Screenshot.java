@@ -11,8 +11,16 @@ import net.maunium.maucapture2.swing.JSelectableImage;
 import net.maunium.maucapture2.util.ScreenCapture;
 
 public class Screenshot {
+	public static JFrame frame;
+	
+	public static void close() {
+		frame.dispose();
+		frame = null;
+	}
+	
 	public static void takeScreenshot(MauCapture host) {
-		JFrame frame = new JFrame("mauCapture " + MauCapture.version);
+		if (frame != null) close();
+		frame = new JFrame("mauCapture " + MauCapture.version);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setUndecorated(true);
 		frame.setAlwaysOnTop(true);
@@ -31,7 +39,7 @@ public class Screenshot {
 			public void mouseReleased(MouseEvent e) {
 				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
 					host.open(bi.getSubimage(si.xs, si.ys, si.xe, si.ye));
-					frame.dispose();
+					close();
 				} else {
 					si.xs = Integer.MIN_VALUE;
 					si.xe = Integer.MIN_VALUE;
