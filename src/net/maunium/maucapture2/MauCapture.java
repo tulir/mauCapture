@@ -50,7 +50,7 @@ public class MauCapture {
 	public static final String version = "2.0";
 	
 	private JFrame frame;
-	private JButton capture, preferences/* , save, copy */, uploadMIS, uploadImgur, color, crop;
+	private JButton capture, preferences, save, copy, uploadMIS, uploadImgur, color, crop;
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase;
 	private JPanel top, side;
 	private JDrawPlate jdp;
@@ -78,8 +78,10 @@ public class MauCapture {
 				side.setSize(48, height);
 				
 				preferences.setLocation(width - 48, 0);
-				uploadImgur.setLocation(width - 48 - 128, 0);
-				uploadMIS.setLocation(width - 48 - 128 - 128, 0);
+				uploadImgur.setLocation(width - 1 * 48 - 1 * 128, 0);
+				uploadMIS.setLocation(width - 1 * 48 - 2 * 128, 0);
+				save.setLocation(width - 2 * 48 - 2 * 128, 0);
+				copy.setLocation(width - 3 * 48 - 2 * 128, 0);
 			}
 		});
 		frame.addWindowListener(new WindowAdapter() {
@@ -120,11 +122,12 @@ public class MauCapture {
 		});
 		
 		preferences = createButton("preferences.png", 48, 48, 0, 0, "Preferences", settings, "PREFS");
-		// TODO: save and copy
 		uploadMIS = createButton("mauImageServer.png", 128, 48, 0, 0, "Upload to a mauImageServer", uploaders, "MIS");
 		uploadMIS.setText("MIS Upload");
 		uploadImgur = createButton("imgur.png", 128, 48, 0, 0, "Upload to Imgur", uploaders, "IMGUR");
 		uploadImgur.setText("Imgur Upload");
+		save = createButton("save.png", 48, 48, 0, 0, "Save to disk", null, "SAVE");
+		copy = createButton("copy.png", 48, 48, 0, 0, "Copy to clipboard", null, "COPY");
 		
 		color = createButton("color.png", 48, 48, 0, 0 * 48, "Change draw/text color", settings, "COLOR");
 		arrow = createToggleButton("arrow.png", 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
@@ -155,8 +158,8 @@ public class MauCapture {
 		
 		top.add(capture);
 		top.add(preferences);
-		// top.add(save);
-		// top.add(copy);
+		top.add(save);
+		top.add(copy);
 		top.add(uploadMIS);
 		top.add(uploadImgur);
 		
