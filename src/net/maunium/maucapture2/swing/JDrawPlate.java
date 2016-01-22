@@ -252,12 +252,31 @@ public class JDrawPlate extends JComponent implements MouseListener, MouseMotion
 	 * Getters and setters
 	 */
 	
+	/**
+	 * Get the visible image.
+	 */
 	public BufferedImage getImage() {
 		return bi;
 	}
 	
-	public void setImage(BufferedImage bi) {
+	/**
+	 * Get the image used as background when erasing.
+	 */
+	public BufferedImage getBackgroundImage() {
+		return original;
+	}
+	
+	/**
+	 * Set the visible image.
+	 */
+	public void setForegroundImage(BufferedImage bi) {
 		this.bi = bi;
+	}
+	
+	/**
+	 * Set the image used as background when erasing.
+	 */
+	public void setBackgroundImage(BufferedImage bi) {
 		original = deepCopy(bi);
 	}
 	

@@ -84,8 +84,8 @@ public class MauCapture {
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(getIcon("maucapture.png").getImage());
 		/*
-		 * Add component listener for changing sizes of the button panels and locations of the
-		 * buttons on the right side of the top panel.
+		 * Add component listener for changing sizes of the button panels and locations of the buttons on the right side
+		 * of the top panel.
 		 */
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -310,7 +310,8 @@ public class MauCapture {
 	 * Open the given buffered image in the MauCapture Editor.
 	 */
 	public void open(BufferedImage bi) {
-		jdp.setImage(bi);
+		jdp.setForegroundImage(bi);
+		jdp.setBackgroundImage(bi);
 		jdp.setSize(bi.getWidth(), bi.getHeight());
 		frame.getContentPane().setPreferredSize(new Dimension(bi.getWidth() + 48, bi.getHeight() + 48));
 		frame.pack();
@@ -367,7 +368,8 @@ public class MauCapture {
 				// Make sure the cropped area is big enough.
 				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
 					// Area is big enough. Set it as the image for the drawplate.
-					jdp.setImage(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
+					jdp.setForegroundImage(jdp.getImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
+					jdp.setBackgroundImage(jdp.getBackgroundImage().getSubimage(si.xs, si.ys, si.xe, si.ye));
 					// Deselect the crop mode button.
 					crop.setSelected(false);
 					// Exit cropping mode.
