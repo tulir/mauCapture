@@ -76,7 +76,7 @@ public class MauCapture {
 	/** Config value */
 	private String username = "", authtoken = "", url = "", password = "", saveLocation = System.getProperty("user.home");
 	/** Config value */
-	private boolean savePassword;
+	private boolean savePassword = false;
 	
 	public MauCapture() {
 		frame = new JFrame("mauCapture " + version);
