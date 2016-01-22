@@ -26,7 +26,7 @@ public class Screenshot {
 	
 	public static void takeScreenshot(MauCapture host) {
 		if (frame != null) close();
-		frame = new JFrame("mauCapture " + MauCapture.version);
+		frame = new JFrame("mauCapture " + MauCapture.versionReadable);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setUndecorated(true);
 		frame.setAlwaysOnTop(true);

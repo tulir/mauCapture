@@ -61,7 +61,7 @@ public class MauCapture {
 	/** Configuration path */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	/** Version string */
-	public static final String version = "2.0", versionFull = "2.0.0_B4";
+	public static final String versionReadable = "2.0 B4", version = "2.0.0_B4";
 	/** Main frame */
 	private JFrame frame;
 	/** Non-toggle button */
@@ -79,7 +79,7 @@ public class MauCapture {
 	private boolean savePassword = false;
 	
 	public MauCapture() {
-		frame = new JFrame("mauCapture " + version);
+		frame = new JFrame("mauCapture " + versionReadable);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(getIcon("maucapture.png").getImage());

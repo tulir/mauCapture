@@ -100,7 +100,7 @@ public class MISUploader extends Uploader {
 			payload.addProperty("image", image);
 			payload.addProperty("image-name", imageName);
 			// TODO: Uncomment when implemented in MIS.
-//			payload.addProperty("client-software", "mauCapture " + MauCapture.versionFull);
+//			payload.addProperty("client-software", "mauCapture " + MauCapture.version);
 			if (username.length() > 0 && authtoken.length() > 0) {
 				payload.addProperty("username", username);
 				payload.addProperty("auth-token", authtoken);
