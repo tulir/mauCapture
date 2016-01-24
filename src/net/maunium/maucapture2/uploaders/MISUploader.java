@@ -28,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import net.maunium.maucapture2.MauCapture;
 import net.maunium.maucapture2.util.ProgressStringEntity;
 
 /**
@@ -99,8 +100,8 @@ public class MISUploader extends Uploader {
 			JsonObject payload = new JsonObject();
 			payload.addProperty("image", image);
 			payload.addProperty("image-name", imageName);
-			// TODO: Uncomment when implemented in MIS.
-//			payload.addProperty("client-software", "mauCapture " + MauCapture.versionFull);
+			payload.addProperty("image-format", "png");
+			payload.addProperty("client-name", "mauCapture " + MauCapture.version);
 			if (username.length() > 0 && authtoken.length() > 0) {
 				payload.addProperty("username", username);
 				payload.addProperty("auth-token", authtoken);
