@@ -133,6 +133,8 @@ public class MauCapture {
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				// Ignore all non-keydown events.
 				if (e.getID() != KeyEvent.KEY_PRESSED) return false;
+				// Ignore keybinds if the screenshot or main frame is not focused.
+				if (!frame.isFocused() && !(Screenshot.frame != null && Screenshot.frame.isFocused())) return false;
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					frame.dispose();
 					System.exit(0);
