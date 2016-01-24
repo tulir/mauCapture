@@ -94,7 +94,7 @@ public class Preferences {
 					JOptionPane.showMessageDialog(frame, "You must fill all the fillable fields to log in.", "Incomplete details", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				String status = host.login(username.getText(), String.valueOf(password.getPassword()));
+				String status = host.login(addr.getText(), username.getText(), String.valueOf(password.getPassword()));
 				switch (status) {
 					case "success":
 						if (!savePassword.isSelected()) password.setText("");

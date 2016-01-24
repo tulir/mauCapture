@@ -525,7 +525,7 @@ public class MauCapture {
 	 * 
 	 * @return The authentication token, or a simple error word with "{@code err:}" as the prefix.
 	 */
-	public String login(String username, String password) {
+	public String login(String url, String username, String password) {
 		String result = MISUploader.login(url, username, password);
 		if (!result.startsWith("err:")) {
 			authtoken = result;
