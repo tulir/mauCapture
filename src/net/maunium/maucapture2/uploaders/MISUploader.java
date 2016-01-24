@@ -100,6 +100,7 @@ public class MISUploader extends Uploader {
 			JsonObject payload = new JsonObject();
 			payload.addProperty("image", image);
 			payload.addProperty("image-name", imageName);
+			payload.addProperty("image-format", "png");
 			payload.addProperty("client-name", "mauCapture " + MauCapture.version);
 			if (username.length() > 0 && authtoken.length() > 0) {
 				payload.addProperty("username", username);
