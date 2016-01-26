@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,7 +28,7 @@ public class Preferences {
 		frame.setLayout(null);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(host.getFrame());
-		frame.getContentPane().setPreferredSize(new Dimension(500, 150));
+		frame.getContentPane().setPreferredSize(new Dimension(500, 180));
 		frame.pack();
 		frame.setFont(MauCapture.lato);
 		frame.addWindowListener(new WindowAdapter() {
@@ -116,20 +117,20 @@ public class Preferences {
 		});
 		login.setFont(MauCapture.lato);
 		
-		JButton cancel = new JButton("Cancel");
-		cancel.setSize(240, 30);
-		cancel.setLocation(255, 110);
-		cancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-			}
-		});
-		cancel.setFont(MauCapture.lato);
+		JLabel formatl = new JLabel("Image Upload Format");
+		formatl.setSize(130, 30);
+		formatl.setLocation(5, 110);
+		formatl.setFont(MauCapture.lato);
+		
+		JComboBox<String> format = new JComboBox<String>(MauCapture.imageTypes);
+		format.setSelectedItem(host.getUploadFormat());
+		format.setSize(110, 30);
+		format.setLocation(135, 110);
+		format.setFont(MauCapture.lato);
 		
 		JButton save = new JButton("Save");
 		save.setSize(240, 30);
-		save.setLocation(5, 110);
+		save.setLocation(5, 145);
 		save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -137,6 +138,7 @@ public class Preferences {
 				if (savePassword.isSelected()) host.setPassword(String.valueOf(password.getPassword()));
 				host.setSavePassword(savePassword.isSelected());
 				host.setUsername(username.getText());
+				host.setUploadFormat((String) format.getSelectedItem());
 				try {
 					host.saveConfig();
 				} catch (IOException e1) {
@@ -148,6 +150,17 @@ public class Preferences {
 		});
 		save.setFont(MauCapture.lato);
 		
+		JButton cancel = new JButton("Cancel");
+		cancel.setSize(240, 30);
+		cancel.setLocation(255, 145);
+		cancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
+		cancel.setFont(MauCapture.lato);
+		
 		frame.add(addr);
 		frame.add(addrl);
 		frame.add(authtoken);
@@ -158,8 +171,10 @@ public class Preferences {
 		frame.add(passwordl);
 		frame.add(savePassword);
 		frame.add(login);
-		frame.add(cancel);
+		frame.add(format);
+		frame.add(formatl);
 		frame.add(save);
+		frame.add(cancel);
 		frame.setVisible(true);
 	}
 }

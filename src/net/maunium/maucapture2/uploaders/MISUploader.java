@@ -38,13 +38,14 @@ import net.maunium.maucapture2.util.ProgressStringEntity;
  * @since 2.0.0
  */
 public class MISUploader extends Uploader {
-	private String addr, imageName, username, authtoken;
+	private String addr, imageName, format, username, authtoken;
 	
-	public MISUploader(JFrame host, String addr, String imageName, String username, String authtoken) {
+	public MISUploader(JFrame host, String addr, String imageName, String format, String username, String authtoken) {
 		super(host);
 		if (!addr.endsWith("/")) addr += "/";
 		this.addr = addr;
 		this.imageName = imageName;
+		this.format = format;
 		this.username = username;
 		this.authtoken = authtoken;
 		frame.setTitle("MauCapture MIS Uploader");
@@ -84,7 +85,7 @@ public class MISUploader extends Uploader {
 	public void upload(BufferedImage bi) {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try {
-			ImageIO.write(bi, "png", os);
+			ImageIO.write(bi, format, os);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +101,7 @@ public class MISUploader extends Uploader {
 			JsonObject payload = new JsonObject();
 			payload.addProperty("image", image);
 			payload.addProperty("image-name", imageName);
-			payload.addProperty("image-format", "png");
+			payload.addProperty("image-format", format);
 			payload.addProperty("client-name", "mauCapture " + MauCapture.version);
 			if (username.length() > 0 && authtoken.length() > 0) {
 				payload.addProperty("username", username);
@@ -113,7 +114,7 @@ public class MISUploader extends Uploader {
 			JsonElement e = new JsonParser().parse(EntityUtils.toString(httpresp.getEntity()));
 			JsonObject main = e.getAsJsonObject();
 			if (main.get("success").getAsBoolean()) {
-				String url = addr + imageName + ".png";
+				String url = addr + imageName + "." + format;
 				
 				Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 				StringSelection ss = new StringSelection(url);
