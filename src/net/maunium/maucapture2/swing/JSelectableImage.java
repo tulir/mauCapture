@@ -19,8 +19,8 @@ public class JSelectableImage extends JComponent implements MouseListener, Mouse
 	private static final long serialVersionUID = 1L;
 	
 	private BufferedImage bi;
-	private int x, y;
-	public int xs, ys, xe, ye;
+	private int clickX = 0, clickY = 0;
+	public int xMin = Integer.MIN_VALUE, yMin = Integer.MIN_VALUE, xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
 	
 	public BufferedImage getImage() {
 		return bi;
@@ -29,12 +29,6 @@ public class JSelectableImage extends JComponent implements MouseListener, Mouse
 	public JSelectableImage(BufferedImage bi) {
 		super();
 		this.bi = bi;
-		x = 0;
-		y = 0;
-		xs = Integer.MIN_VALUE;
-		ys = Integer.MIN_VALUE;
-		xe = Integer.MIN_VALUE;
-		ye = Integer.MIN_VALUE;
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
@@ -44,37 +38,34 @@ public class JSelectableImage extends JComponent implements MouseListener, Mouse
 		g.drawImage(bi, 0, 0, bi.getWidth(), bi.getHeight(), null);
 		g.setColor(new Color(210, 210, 210, 150));
 		g.fillRect(0, 0, getWidth(), getHeight());
-		if (xe == Integer.MIN_VALUE || xs == Integer.MIN_VALUE || ye == Integer.MIN_VALUE || ys == Integer.MIN_VALUE) return;
+		if (xMin == Integer.MIN_VALUE || yMin == Integer.MIN_VALUE || xMax == Integer.MIN_VALUE || yMax == Integer.MIN_VALUE) return;
 		try {
-			g.drawImage(bi.getSubimage(xs, ys, xe, ye), xs, ys, xe, ye, null);
+			g.drawImage(bi.getSubimage(xMin, yMin, getSelectWidth(), getSelectHeight()), xMin, yMin, getSelectWidth(), getSelectHeight(), null);
 			g.setColor(Color.RED);
-			g.drawRect(xs, ys, xe, ye);
+			g.drawRect(xMin, yMin, getSelectWidth(), getSelectHeight());
 		} catch (Exception e) {}
+	}
+	
+	public int getSelectWidth() {
+		return xMax - xMin;
+	}
+	
+	public int getSelectHeight() {
+		return yMax - yMin;
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-		x = e.getX();
-		y = e.getY();
+		clickX = e.getX();
+		clickY = e.getY();
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (e.getX() - x < 0) {
-			xs = e.getX();
-			xe = x - xs;
-		} else {
-			xs = x;
-			xe = e.getX() - x;
-		}
-		if (e.getY() - y < 0) {
-			ys = e.getY();
-			ye = y - ys;
-		} else {
-			ys = y;
-			ye = e.getY() - y;
-		}
-		
+		xMin = Math.max(0, Math.min(e.getX(), clickX));
+		xMax = Math.min(getWidth(), Math.max(e.getX(), clickX));
+		yMin = Math.max(0, Math.min(e.getY(), clickY));
+		yMax = Math.min(getHeight(), Math.max(e.getY(), clickY));
 		this.repaint();
 	}
 	

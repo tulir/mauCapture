@@ -43,14 +43,14 @@ public class Screenshot {
 		si.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (si.xe > 20 && si.ye > 5 || si.ye > 20 && si.xe > 5) {
-					host.open(bi.getSubimage(si.xs, si.ys, si.xe, si.ye));
+				if (si.getSelectWidth() > 20 && si.getSelectHeight() > 5 || si.getSelectHeight() > 20 && si.getSelectWidth() > 5) {
+					host.open(bi.getSubimage(si.xMin, si.yMin, si.getSelectWidth(), si.getSelectHeight()));
 					close();
 				} else {
-					si.xs = Integer.MIN_VALUE;
-					si.xe = Integer.MIN_VALUE;
-					si.ys = Integer.MIN_VALUE;
-					si.ye = Integer.MIN_VALUE;
+					si.xMin = Integer.MIN_VALUE;
+					si.xMax = Integer.MIN_VALUE;
+					si.yMin = Integer.MIN_VALUE;
+					si.yMax = Integer.MIN_VALUE;
 					si.repaint();
 				}
 			}
