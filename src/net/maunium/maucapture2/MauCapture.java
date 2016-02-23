@@ -332,8 +332,8 @@ public class MauCapture {
 		int prefWidth = 1280, prefHeight = 720;
 		if (bi.getWidth() < prefWidth) prefWidth = bi.getWidth();
 		if (bi.getHeight() < prefHeight) prefHeight = bi.getHeight();
-		jsp.setSize(prefWidth + 5, prefWidth + 5);
-		frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 53, prefHeight + 53));
+		jsp.setSize(prefWidth, prefWidth);
+		frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 50, prefHeight + 50));
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -399,8 +399,8 @@ public class MauCapture {
 					int prefWidth = 1280, prefHeight = 720;
 					if (bi.getWidth() < prefWidth) prefWidth = bi.getWidth();
 					if (bi.getHeight() < prefHeight) prefHeight = bi.getHeight();
-					jsp.setSize(prefWidth + 5, prefWidth + 5);
-					frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 53, prefHeight + 53));
+					jsp.setSize(prefWidth, prefWidth);
+					frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 50, prefHeight + 50));
 					frame.pack();
 				} else {
 					// Area too small. Reset selection.
