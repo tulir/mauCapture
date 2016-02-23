@@ -39,8 +39,9 @@ import net.maunium.maucapture2.util.ProgressStringEntity;
  */
 public class MISUploader extends Uploader {
 	private String addr, imageName, format, username, authtoken;
+	private boolean hidden;
 	
-	public MISUploader(JFrame host, String addr, String imageName, String format, String username, String authtoken) {
+	public MISUploader(JFrame host, String addr, String imageName, String format, String username, String authtoken, boolean hidden) {
 		super(host);
 		if (!addr.endsWith("/")) addr += "/";
 		this.addr = addr;
@@ -48,6 +49,7 @@ public class MISUploader extends Uploader {
 		this.format = format;
 		this.username = username;
 		this.authtoken = authtoken;
+		this.hidden = hidden;
 		frame.setTitle("MauCapture MIS Uploader");
 		p.setString("Preparing to upload to " + addr);
 	}
@@ -102,6 +104,7 @@ public class MISUploader extends Uploader {
 			payload.addProperty("image", image);
 			payload.addProperty("image-name", imageName);
 			payload.addProperty("image-format", format);
+			payload.addProperty("hidden", hidden);
 			payload.addProperty("client-name", "mauCapture " + MauCapture.version);
 			if (username.length() > 0 && authtoken.length() > 0) {
 				payload.addProperty("username", username);
