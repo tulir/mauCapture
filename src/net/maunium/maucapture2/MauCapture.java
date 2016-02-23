@@ -23,8 +23,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -60,13 +58,13 @@ import net.maunium.maucapture2.util.TransferableImage;
 public class MauCapture {
 	/** The Random instance used to generate image names */
 	private Random r = new Random(System.nanoTime());
-	public static final String[] imageTypes = getImageTypes();
+	public static final String[] imageTypes = ImageIO.getWriterFileSuffixes();
 	/** Main font of MauCapture */
 	public static final Font lato = createLato();
 	/** Configuration path */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	/** Version string */
-	public static final String version = "2.0 B6";
+	public static final String version = "2.0 B7";
 	/** Main frame */
 	private JFrame frame;
 	/** Non-toggle button */
@@ -83,7 +81,7 @@ public class MauCapture {
 	/** Config value */
 	private String username = "", authtoken = "", url = "", password = "", saveLocation = System.getProperty("user.home"), uploadFormat = "png";
 	/** Config value */
-	private boolean savePassword = false;
+	private boolean savePassword = false, hideImage = false;
 	
 	public MauCapture() {
 		frame = new JFrame("mauCapture " + version);
@@ -91,8 +89,8 @@ public class MauCapture {
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(getIcon("maucapture.png").getImage());
 		/*
-		 * Add component listener for changing sizes of the button panels and locations of the
-		 * buttons on the right side of the top panel.
+		 * Add component listener for changing sizes of the button panels and locations of the buttons on the right side
+		 * of the top panel.
 		 */
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -168,7 +166,7 @@ public class MauCapture {
 					c.setContents(timg, timg);
 					JOptionPane.showMessageDialog(getFrame(), "The image has been copied to your clipboard.", "Image copied", JOptionPane.INFORMATION_MESSAGE);
 				} else if (e.getKeyCode() == KeyEvent.VK_U) {
-					Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken), jdp.getImage());
+					Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
 				} else return false;
 				return true;
 			}
@@ -365,7 +363,7 @@ public class MauCapture {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (evt.getActionCommand().equals("MIS")) {
-				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken), jdp.getImage());
+				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
 			} else if (evt.getActionCommand().equals("IMGUR")) {
 				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
 			}
@@ -532,6 +530,14 @@ public class MauCapture {
 		this.savePassword = savePassword;
 	}
 	
+	public boolean hideImage() {
+		return hideImage;
+	}
+	
+	public void setHideImage(boolean hideImage) {
+		this.hideImage = hideImage;
+	}
+	
 	/**
 	 * Get the username that should be used for MIS authentication.
 	 */
@@ -611,13 +617,6 @@ public class MauCapture {
 			t.printStackTrace();
 			return new Font(Font.SANS_SERIF, Font.PLAIN, 11);
 		}
-	}
-	
-	private static final String[] getImageTypes() {
-		List<String> types = new ArrayList<String>();
-		for (String s : ImageIO.getWriterFileSuffixes())
-			if (s == "png" || s == "jpeg" || s == "gif" || s == "bmp") types.add(s);
-		return types.toArray(new String[0]);
 	}
 	
 	public static void main(String[] args) {

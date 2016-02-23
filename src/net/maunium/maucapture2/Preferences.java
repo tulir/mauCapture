@@ -128,6 +128,11 @@ public class Preferences {
 		format.setLocation(135, 110);
 		format.setFont(MauCapture.lato);
 		
+		JCheckBox hidden = new JCheckBox("Hide image from search", host.hideImage());
+		hidden.setLocation(320, 110);
+		hidden.setSize(240, 30);
+		hidden.setFont(MauCapture.lato);
+		
 		JButton save = new JButton("Save");
 		save.setSize(240, 30);
 		save.setLocation(5, 145);
@@ -137,6 +142,7 @@ public class Preferences {
 				host.setAddress(addr.getText());
 				if (savePassword.isSelected()) host.setPassword(String.valueOf(password.getPassword()));
 				host.setSavePassword(savePassword.isSelected());
+				host.setHideImage(hidden.isSelected());
 				host.setUsername(username.getText());
 				host.setUploadFormat((String) format.getSelectedItem());
 				try {
@@ -173,6 +179,7 @@ public class Preferences {
 		frame.add(login);
 		frame.add(format);
 		frame.add(formatl);
+		frame.add(hidden);
 		frame.add(save);
 		frame.add(cancel);
 		frame.setVisible(true);
