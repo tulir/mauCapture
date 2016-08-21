@@ -27,7 +27,7 @@ public class ScreenCapture {
 	
 	public static BufferedImage capture(Rectangle r) {
 		try {
-			FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(":0.0+" + r.x + "," + r.y);
+			FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(System.getenv("DISPLAY") + "+" + r.x + "," + r.y);
 			grabber.setFormat("x11grab");
 			grabber.setImageWidth(r.width);
 			grabber.setImageHeight(r.height);
