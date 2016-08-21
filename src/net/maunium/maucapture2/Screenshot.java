@@ -20,6 +20,9 @@ public class Screenshot {
 			p.waitFor();
 			takingScreenshot = false;
 			File file = new File("/tmp/maucapture.png");
+			if (!file.exists()) {
+				System.exit(0);
+			}
 			host.open(ImageIO.read(file));
 			file.delete();
 		} catch (Throwable t) {
