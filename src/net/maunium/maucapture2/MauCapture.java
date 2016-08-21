@@ -64,7 +64,7 @@ public class MauCapture {
 	/** Configuration path */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	/** Version string */
-	public static final String version = "2.0 B7";
+	public static final String version = "2.0 B8";
 	/** Main frame */
 	private JFrame frame;
 	/** Non-toggle button */
@@ -79,7 +79,8 @@ public class MauCapture {
 	private JDrawPlate jdp;
 	
 	/** Config value */
-	private String username = "", authtoken = "", url = "", password = "", saveLocation = System.getProperty("user.home"), uploadFormat = "png";
+	private String username = "", authtoken = "", url = "", password = "",
+			saveLocation = System.getProperty("user.home"), uploadFormat = "png";
 	/** Config value */
 	private boolean savePassword = false, hideImage = false;
 	
@@ -89,16 +90,18 @@ public class MauCapture {
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(getIcon("maucapture.png").getImage());
 		/*
-		 * Add component listener for changing sizes of the button panels and locations of the buttons on the right side
-		 * of the top panel.
+		 * Add component listener for changing sizes of the button panels and locations of the
+		 * buttons on the right side of the top panel.
 		 */
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent evt) {
 				int width = frame.getContentPane().getWidth(), height = frame.getContentPane().getHeight();
 				if (width < 520 || height < 440) {
-					if (width < 520) width = 520;
-					if (height < 440) height = 440;
+					if (width < 520)
+						width = 520;
+					if (height < 440)
+						height = 440;
 					frame.getContentPane().setPreferredSize(new Dimension(width, height));
 					frame.pack();
 					return;
@@ -126,27 +129,27 @@ public class MauCapture {
 				}
 			}
 		});
-		/* @mauformat=off
-		 * Add application-wide key listener for keybinds
-		 * 	CTRL+S - Save image to disk
-		 *  CTRL+C - Copy image to clipboard
-		 *  CTRL+I - Import image from disk
-		 *  Escape - Quit MauCapture
+		/*
+		 * @mauformat=off Add application-wide key listener for keybinds CTRL+S - Save image to disk
+		 * CTRL+C - Copy image to clipboard CTRL+I - Import image from disk Escape - Quit MauCapture
 		 * @mauformat=on
 		 */
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				// Ignore all non-keydown events.
-				if (e.getID() != KeyEvent.KEY_PRESSED) return false;
+				if (e.getID() != KeyEvent.KEY_PRESSED)
+					return false;
 				// Ignore keybinds if the screenshot or main frame is not focused.
-				if (!frame.isFocused() && !(Screenshot.frame != null && Screenshot.frame.isFocused())) return false;
+				if (!frame.isFocused() && !(Screenshot.frame != null && Screenshot.frame.isFocused()))
+					return false;
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					frame.dispose();
 					System.exit(0);
 					return true;
 				}
-				if (!e.isControlDown() || e.isAltDown() || e.isShiftDown()) return false;
+				if (!e.isControlDown() || e.isAltDown() || e.isShiftDown())
+					return false;
 				if (e.getKeyCode() == KeyEvent.VK_S && jdp.getImage() != null) {
 					if (Screenshot.frame != null) {
 						Screenshot.close();
@@ -154,7 +157,8 @@ public class MauCapture {
 					}
 					FileManager.save(MauCapture.this);
 				} else if (e.getKeyCode() == KeyEvent.VK_I) {
-					if (Screenshot.frame != null) Screenshot.close();
+					if (Screenshot.frame != null)
+						Screenshot.close();
 					FileManager.load(MauCapture.this);
 				} else if (e.getKeyCode() == KeyEvent.VK_C && jdp.getImage() != null) {
 					if (Screenshot.frame != null) {
@@ -164,10 +168,16 @@ public class MauCapture {
 					Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 					TransferableImage timg = new TransferableImage(jdp.getImage());
 					c.setContents(timg, timg);
-					JOptionPane.showMessageDialog(getFrame(), "The image has been copied to your clipboard.", "Image copied", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(
+							getFrame(), "The image has been copied to your clipboard.", "Image copied",
+							JOptionPane.INFORMATION_MESSAGE);
 				} else if (e.getKeyCode() == KeyEvent.VK_U) {
-					Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
-				} else return false;
+					Uploader.upload(
+							new MISUploader(
+									getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage),
+							jdp.getImage());
+				} else
+					return false;
 				return true;
 			}
 		});
@@ -259,7 +269,8 @@ public class MauCapture {
 		config.addProperty("username", username);
 		config.addProperty("authtoken", authtoken);
 		config.addProperty("address", url);
-		if (savePassword) config.addProperty("password", password);
+		if (savePassword)
+			config.addProperty("password", password);
 		config.addProperty("save-password", savePassword);
 		config.addProperty("save-location", saveLocation);
 		config.addProperty("upload-format", uploadFormat);
@@ -270,38 +281,48 @@ public class MauCapture {
 	}
 	
 	public void loadConfig() throws FileNotFoundException {
-		if (!MauCapture.config.exists()) return;
+		if (!MauCapture.config.exists())
+			return;
 		JsonParser parser = new JsonParser();
 		JsonObject config = parser.parse(new FileReader(MauCapture.config)).getAsJsonObject();
 		JsonElement e;
 		
 		e = config.get("username");
-		if (e != null && e.isJsonPrimitive()) username = e.getAsString();
+		if (e != null && e.isJsonPrimitive())
+			username = e.getAsString();
 		e = config.get("authtoken");
-		if (e != null && e.isJsonPrimitive()) authtoken = e.getAsString();
+		if (e != null && e.isJsonPrimitive())
+			authtoken = e.getAsString();
 		e = config.get("address");
-		if (e != null && e.isJsonPrimitive()) url = e.getAsString();
+		if (e != null && e.isJsonPrimitive())
+			url = e.getAsString();
 		e = config.get("password");
-		if (e != null && e.isJsonPrimitive()) password = e.getAsString();
+		if (e != null && e.isJsonPrimitive())
+			password = e.getAsString();
 		e = config.get("save-password");
-		if (e != null && e.isJsonPrimitive()) savePassword = e.getAsBoolean();
+		if (e != null && e.isJsonPrimitive())
+			savePassword = e.getAsBoolean();
 		e = config.get("save-location");
-		if (e != null && e.isJsonPrimitive()) saveLocation = e.getAsString();
+		if (e != null && e.isJsonPrimitive())
+			saveLocation = e.getAsString();
 		e = config.get("upload-format");
-		if (e != null && e.isJsonPrimitive()) uploadFormat = e.getAsString();
+		if (e != null && e.isJsonPrimitive())
+			uploadFormat = e.getAsString();
 	}
 	
 	/**
 	 * Create and configure a button.
 	 */
-	private JButton createButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
+	private JButton createButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis,
+			String actionCommand) {
 		return configureButton(new JButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 	
 	/**
 	 * Create and configure a toggle button.
 	 */
-	private JToggleButton createToggleButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
+	private JToggleButton createToggleButton(String icon, int width, int height, int x, int y, String tooltip,
+			ActionListener aclis, String actionCommand) {
 		return configureButton(new JToggleButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 	
@@ -310,7 +331,8 @@ public class MauCapture {
 	 * 
 	 * @return The given button.
 	 */
-	private <T extends AbstractButton> T configureButton(T button, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
+	private <T extends AbstractButton> T configureButton(T button, int width, int height, int x, int y, String tooltip,
+			ActionListener aclis, String actionCommand) {
 		button.setFont(lato);
 		button.setBorderPainted(false);
 		button.setFocusPainted(false);
@@ -330,10 +352,12 @@ public class MauCapture {
 		jdp.setBackgroundImage(bi);
 		jdp.setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
 		int prefWidth = 1280, prefHeight = 720;
-		if (bi.getWidth() < prefWidth) prefWidth = bi.getWidth();
-		if (bi.getHeight() < prefHeight) prefHeight = bi.getHeight();
-		jsp.setSize(prefWidth + 5, prefWidth + 5);
-		frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 53, prefHeight + 53));
+		if (bi.getWidth() < prefWidth)
+			prefWidth = bi.getWidth();
+		if (bi.getHeight() < prefHeight)
+			prefHeight = bi.getHeight();
+		jsp.setSize(prefWidth, prefWidth);
+		frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 50, prefHeight + 50));
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -363,7 +387,9 @@ public class MauCapture {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (evt.getActionCommand().equals("MIS")) {
-				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
+				Uploader.upload(
+						new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage),
+						jdp.getImage());
 			} else if (evt.getActionCommand().equals("IMGUR")) {
 				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
 			}
@@ -378,29 +404,37 @@ public class MauCapture {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (crop.isSelected()) enterCrop();
-			else exitCrop();
+			if (crop.isSelected())
+				enterCrop();
+			else
+				exitCrop();
 		}
 		
 		private MouseAdapter siMouse = new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				// Make sure the cropped area is big enough.
-				if (si.getSelectWidth() > 20 && si.getSelectHeight() > 5 || si.getSelectHeight() > 20 && si.getSelectWidth() > 5) {
-					BufferedImage bi = jdp.getImage().getSubimage(si.xMin, si.yMin, si.getSelectWidth(), si.getSelectHeight());
+				if (si.getSelectWidth() > 20 && si.getSelectHeight() > 5
+						|| si.getSelectHeight() > 20 && si.getSelectWidth() > 5) {
+					BufferedImage bi =
+							jdp.getImage().getSubimage(si.xMin, si.yMin, si.getSelectWidth(), si.getSelectHeight());
 					// Area is big enough. Set it as the image for the drawplate.
 					jdp.setForegroundImage(bi);
-					jdp.setBackgroundImage(jdp.getBackgroundImage().getSubimage(si.xMin, si.yMin, si.getSelectWidth(), si.getSelectHeight()));
+					jdp.setBackgroundImage(
+							jdp.getBackgroundImage().getSubimage(
+									si.xMin, si.yMin, si.getSelectWidth(), si.getSelectHeight()));
 					// Deselect the crop mode button.
 					crop.setSelected(false);
 					// Exit cropping mode.
 					exitCrop();
 					jdp.setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
 					int prefWidth = 1280, prefHeight = 720;
-					if (bi.getWidth() < prefWidth) prefWidth = bi.getWidth();
-					if (bi.getHeight() < prefHeight) prefHeight = bi.getHeight();
-					jsp.setSize(prefWidth + 5, prefWidth + 5);
-					frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 53, prefHeight + 53));
+					if (bi.getWidth() < prefWidth)
+						prefWidth = bi.getWidth();
+					if (bi.getHeight() < prefHeight)
+						prefHeight = bi.getHeight();
+					jsp.setSize(prefWidth, prefWidth);
+					frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 50, prefHeight + 50));
 					frame.pack();
 				} else {
 					// Area too small. Reset selection.
@@ -469,8 +503,10 @@ public class MauCapture {
 	private ImageIcon getIcon(String path) {
 		path = "assets/" + path;
 		URL url = MauCapture.class.getClassLoader().getResource(path);
-		if (url != null) return new ImageIcon(url);
-		else System.err.println("Couldn't find file: " + path);
+		if (url != null)
+			return new ImageIcon(url);
+		else
+			System.err.println("Couldn't find file: " + path);
 		return null;
 	}
 	
@@ -563,7 +599,8 @@ public class MauCapture {
 			authtoken = result;
 			this.username = username;
 			return "success";
-		} else return result;
+		} else
+			return result;
 	}
 	
 	/**
@@ -595,7 +632,8 @@ public class MauCapture {
 		return uploadFormat;
 	}
 	
-	private final char[] randomizeAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+	private final char[] randomizeAllowed =
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 	
 	/**
 	 * Generate a random string matching the regex [a-zA-Z0-9]{{@code chars}}
@@ -612,7 +650,11 @@ public class MauCapture {
 	 */
 	private static final Font createLato() {
 		try {
-			return Font.createFont(Font.TRUETYPE_FONT, MauCapture.class.getClassLoader().getResourceAsStream("assets/lato.ttf")).deriveFont(Font.PLAIN, 13f);
+			return Font
+					.createFont(
+							Font.TRUETYPE_FONT,
+							MauCapture.class.getClassLoader().getResourceAsStream("assets/lato.ttf"))
+					.deriveFont(Font.PLAIN, 13f);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			return new Font(Font.SANS_SERIF, Font.PLAIN, 11);
