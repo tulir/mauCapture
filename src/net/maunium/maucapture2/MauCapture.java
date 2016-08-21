@@ -64,7 +64,7 @@ public class MauCapture {
 	/** Configuration path */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	/** Version string */
-	public static final String version = "2.0 B7";
+	public static final String version = "2.0 B8";
 	/** Main frame */
 	private JFrame frame;
 	/** Non-toggle button */
