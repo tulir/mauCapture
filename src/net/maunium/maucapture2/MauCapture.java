@@ -140,7 +140,8 @@ public class MauCapture {
 				// Ignore all non-keydown events.
 				if (e.getID() != KeyEvent.KEY_PRESSED) return false;
 				// Ignore keybinds if the screenshot or main frame is not focused.
-				if (!frame.isFocused() && !(Screenshot.frame != null && Screenshot.frame.isFocused())) return false;
+				if (!frame.isFocused() && !Screenshot.takingScreenshot) return false;
+				if (Screenshot.takingScreenshot) return false;
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					frame.dispose();
 					System.exit(0);
@@ -148,19 +149,10 @@ public class MauCapture {
 				}
 				if (!e.isControlDown() || e.isAltDown() || e.isShiftDown()) return false;
 				if (e.getKeyCode() == KeyEvent.VK_S && jdp.getImage() != null) {
-					if (Screenshot.frame != null) {
-						Screenshot.close();
-						open(jdp.getImage());
-					}
 					FileManager.save(MauCapture.this);
 				} else if (e.getKeyCode() == KeyEvent.VK_I) {
-					if (Screenshot.frame != null) Screenshot.close();
 					FileManager.load(MauCapture.this);
 				} else if (e.getKeyCode() == KeyEvent.VK_C && jdp.getImage() != null) {
-					if (Screenshot.frame != null) {
-						Screenshot.close();
-						open(jdp.getImage());
-					}
 					Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 					TransferableImage timg = new TransferableImage(jdp.getImage());
 					c.setContents(timg, timg);
