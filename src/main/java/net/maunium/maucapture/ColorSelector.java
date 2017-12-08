@@ -1,4 +1,4 @@
-package net.maunium.maucapture2;
+package net.maunium.maucapture;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,12 +17,12 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import net.maunium.maucapture2.swing.JColorViewer;
+import net.maunium.maucapture.swing.JColorViewer;
 
 /**
  * Contains a method that opens the color selector dialog.
  *
- * @author Tulir293
+ * @author tulir
  * @since 2.0.0
  */
 public class ColorSelector {
@@ -41,13 +41,13 @@ public class ColorSelector {
 				frame.dispose();
 			}
 		});
-		
+
 		Color c = host.getDrawPlate().getDrawColor();
 		JColorViewer jcv = new JColorViewer(c);
 		jcv.setLocation(120, 5);
 		jcv.setSize(30, 155);
 		jcv.setFont(MauCapture.lato);
-		
+
 		JTextField red = new JTextField(Integer.toString(c.getRed()));
 		JTextField green = new JTextField(Integer.toString(c.getGreen()));
 		JTextField blue = new JTextField(Integer.toString(c.getBlue()));
@@ -58,13 +58,12 @@ public class ColorSelector {
 		JLabel blueL = new JLabel("Blue");
 		JLabel opacityL = new JLabel("Opacity");
 		JLabel sizeL = new JLabel("Size");
-		
+
 		KeyListener keyl = new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				JTextField source = (JTextField) e.getSource();
-				if (Character.isISOControl(e.getKeyChar())) return;
-				else if (!Character.isDigit(e.getKeyChar())) {
+				if (Character.isISOControl(e.getKeyChar())) { return; } else if (!Character.isDigit(e.getKeyChar())) {
 					e.consume();
 					return;
 				} else if (source.getText().length() >= 3) {
@@ -72,7 +71,7 @@ public class ColorSelector {
 					return;
 				}
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				jcv.setColor(new Color(Integer.parseInt("0" + red.getText()), Integer.parseInt("0" + green.getText()), Integer.parseInt("0" + blue.getText()),
@@ -80,7 +79,7 @@ public class ColorSelector {
 				jcv.repaint();
 			}
 		};
-		
+
 		Font latoBold = MauCapture.lato.deriveFont(Font.BOLD);
 		redL.setLocation(5, 5);
 		redL.setSize(60, 20);
@@ -89,7 +88,7 @@ public class ColorSelector {
 		red.setSize(50, 20);
 		red.addKeyListener(keyl);
 		red.setFont(MauCapture.lato);
-		
+
 		greenL.setLocation(5, 25);
 		greenL.setSize(60, 20);
 		greenL.setFont(latoBold);
@@ -97,7 +96,7 @@ public class ColorSelector {
 		green.setSize(50, 20);
 		green.addKeyListener(keyl);
 		green.setFont(MauCapture.lato);
-		
+
 		blueL.setLocation(5, 45);
 		blueL.setSize(60, 20);
 		blueL.setFont(latoBold);
@@ -105,7 +104,7 @@ public class ColorSelector {
 		blue.setSize(50, 20);
 		blue.addKeyListener(keyl);
 		blue.setFont(MauCapture.lato);
-		
+
 		opacityL.setLocation(5, 65);
 		opacityL.setSize(60, 20);
 		opacityL.setFont(latoBold);
@@ -113,7 +112,7 @@ public class ColorSelector {
 		opacity.setSize(50, 20);
 		opacity.addKeyListener(keyl);
 		opacity.setFont(MauCapture.lato);
-		
+
 		sizeL.setLocation(5, 85);
 		sizeL.setSize(60, 20);
 		sizeL.setFont(latoBold);
@@ -122,12 +121,12 @@ public class ColorSelector {
 		size.setSize(50, 20);
 		size.addKeyListener(keyl);
 		size.setFont(MauCapture.lato);
-		
+
 		JCheckBox fill = new JCheckBox("Fill Shapes", host.getDrawPlate().getFill());
 		fill.setLocation(5, 110);
 		fill.setSize(110, 20);
 		fill.setFont(latoBold);
-		
+
 		JButton done = new JButton("Done");
 		done.setLocation(5, 130);
 		done.setSize(110, 30);
@@ -143,7 +142,7 @@ public class ColorSelector {
 				frame.dispose();
 			}
 		});
-		
+
 		frame.add(redL);
 		frame.add(red);
 		frame.add(greenL);

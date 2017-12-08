@@ -1,4 +1,4 @@
-package net.maunium.maucapture2.util;
+package net.maunium.maucapture.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,18 +12,18 @@ import org.apache.http.util.Args;
 
 /**
  * A FileBody extension that supports progress bars.
- * 
- * @author Tulir293
+ *
+ * @author tulir
  * @since 2.0.0
  */
 public class ProgressFileBody extends FileBody {
 	private JProgressBar progress;
-	
+
 	public ProgressFileBody(File file, JProgressBar progress) {
 		super(file);
 		this.progress = progress;
 	}
-	
+
 	@Override
 	public void writeTo(final OutputStream out) throws IOException {
 		Args.notNull(out, "Output stream");

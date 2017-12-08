@@ -1,4 +1,4 @@
-package net.maunium.maucapture2;
+package net.maunium.maucapture;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 
 /**
  * Contains a method that opens the MIS settings dialog.
- * 
- * @author Tulir293
+ *
+ * @author tulir
  * @since 2.0.0
  */
 public class Preferences {
@@ -38,53 +38,53 @@ public class Preferences {
 				frame.dispose();
 			}
 		});
-		
+
 		JLabel addrl = new JLabel("Address");
 		addrl.setLocation(5, 5);
 		addrl.setSize(70, 30);
 		addrl.setFont(MauCapture.lato);
-		
+
 		JTextField addr = new JTextField(host.getAddress());
 		addr.setLocation(75, 5);
 		addr.setSize(170, 30);
 		addr.setFont(MauCapture.lato);
-		
+
 		JLabel authtokenl = new JLabel("Auth token");
 		authtokenl.setLocation(5, 40);
 		authtokenl.setSize(70, 30);
 		authtokenl.setFont(MauCapture.lato);
-		
+
 		JTextField authtoken = new JTextField(host.getAuthToken());
 		authtoken.setLocation(75, 40);
 		authtoken.setSize(170, 30);
 		authtoken.setEditable(false);
 		authtoken.setFont(MauCapture.lato);
-		
+
 		JLabel usernamel = new JLabel("Username");
 		usernamel.setLocation(255, 5);
 		usernamel.setSize(60, 30);
 		usernamel.setFont(MauCapture.lato);
-		
+
 		JTextField username = new JTextField(host.getUsername());
 		username.setLocation(320, 5);
 		username.setSize(175, 30);
 		username.setFont(MauCapture.lato);
-		
+
 		JLabel passwordl = new JLabel("Password");
 		passwordl.setLocation(255, 40);
 		passwordl.setSize(60, 30);
 		passwordl.setFont(MauCapture.lato);
-		
+
 		JPasswordField password = new JPasswordField(String.valueOf(host.getPassword()));
 		password.setLocation(320, 40);
 		password.setSize(175, 30);
 		password.setFont(MauCapture.lato);
-		
+
 		JCheckBox savePassword = new JCheckBox("Save password (not recommended)", host.savePassword());
 		savePassword.setLocation(5, 75);
 		savePassword.setSize(240, 30);
 		savePassword.setFont(MauCapture.lato);
-		
+
 		JButton login = new JButton("Log in (get auth token)");
 		login.setLocation(255, 75);
 		login.setSize(240, 30);
@@ -97,42 +97,44 @@ public class Preferences {
 				}
 				String status = host.login(addr.getText(), username.getText(), String.valueOf(password.getPassword()));
 				switch (status) {
-					case "success":
-						if (!savePassword.isSelected()) password.setText("");
-						authtoken.setText(host.getAuthToken());
-						JOptionPane.showMessageDialog(frame, "Successfully logged in as " + username.getText(), "Logged in", JOptionPane.INFORMATION_MESSAGE);
-						break;
-					case "err:incorrectpassword":
-						JOptionPane.showMessageDialog(frame, "The password you entered was incorrect.", "Incorrect password", JOptionPane.ERROR_MESSAGE);
-						break;
-					case "err:servererror":
-						JOptionPane.showMessageDialog(frame, "The server encountered an internal server error.", "Internal server error",
-								JOptionPane.ERROR_MESSAGE);
-						break;
-					case "err:exception":
-						JOptionPane.showMessageDialog(frame, "Failed to contact server.", "Connection error", JOptionPane.ERROR_MESSAGE);
-						break;
+				case "success":
+					if (!savePassword.isSelected()) {
+						password.setText("");
+					}
+					authtoken.setText(host.getAuthToken());
+					JOptionPane.showMessageDialog(frame, "Successfully logged in as " + username.getText(), "Logged in", JOptionPane.INFORMATION_MESSAGE);
+					break;
+				case "err:incorrectpassword":
+					JOptionPane.showMessageDialog(frame, "The password you entered was incorrect.", "Incorrect password", JOptionPane.ERROR_MESSAGE);
+					break;
+				case "err:servererror":
+					JOptionPane.showMessageDialog(frame, "The server encountered an internal server error.", "Internal server error",
+							JOptionPane.ERROR_MESSAGE);
+					break;
+				case "err:exception":
+					JOptionPane.showMessageDialog(frame, "Failed to contact server.", "Connection error", JOptionPane.ERROR_MESSAGE);
+					break;
 				}
 			}
 		});
 		login.setFont(MauCapture.lato);
-		
+
 		JLabel formatl = new JLabel("Image Upload Format");
 		formatl.setSize(130, 30);
 		formatl.setLocation(5, 110);
 		formatl.setFont(MauCapture.lato);
-		
+
 		JComboBox<String> format = new JComboBox<String>(MauCapture.imageTypes);
 		format.setSelectedItem(host.getUploadFormat());
 		format.setSize(110, 30);
 		format.setLocation(135, 110);
 		format.setFont(MauCapture.lato);
-		
+
 		JCheckBox hidden = new JCheckBox("Hide image from search", host.hideImage());
 		hidden.setLocation(320, 110);
 		hidden.setSize(240, 30);
 		hidden.setFont(MauCapture.lato);
-		
+
 		JButton save = new JButton("Save");
 		save.setSize(240, 30);
 		save.setLocation(5, 145);
@@ -140,7 +142,7 @@ public class Preferences {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				host.setAddress(addr.getText());
-				if (savePassword.isSelected()) host.setPassword(String.valueOf(password.getPassword()));
+				if (savePassword.isSelected()) { host.setPassword(String.valueOf(password.getPassword())); }
 				host.setSavePassword(savePassword.isSelected());
 				host.setHideImage(hidden.isSelected());
 				host.setUsername(username.getText());
@@ -155,7 +157,7 @@ public class Preferences {
 			}
 		});
 		save.setFont(MauCapture.lato);
-		
+
 		JButton cancel = new JButton("Cancel");
 		cancel.setSize(240, 30);
 		cancel.setLocation(255, 145);
@@ -166,7 +168,7 @@ public class Preferences {
 			}
 		});
 		cancel.setFont(MauCapture.lato);
-		
+
 		frame.add(addr);
 		frame.add(addrl);
 		frame.add(authtoken);

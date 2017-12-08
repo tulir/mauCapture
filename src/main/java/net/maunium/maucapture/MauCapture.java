@@ -1,4 +1,4 @@
-package net.maunium.maucapture2;
+package net.maunium.maucapture;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -42,17 +42,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 
-import net.maunium.maucapture2.swing.JDrawPlate;
-import net.maunium.maucapture2.swing.JSelectableImage;
-import net.maunium.maucapture2.uploaders.ImgurUploader;
-import net.maunium.maucapture2.uploaders.MISUploader;
-import net.maunium.maucapture2.uploaders.Uploader;
-import net.maunium.maucapture2.util.TransferableImage;
+import net.maunium.maucapture.swing.JDrawPlate;
+import net.maunium.maucapture.swing.JSelectableImage;
+import net.maunium.maucapture.uploaders.ImgurUploader;
+import net.maunium.maucapture.uploaders.MISUploader;
+import net.maunium.maucapture.uploaders.Uploader;
+import net.maunium.maucapture.util.TransferableImage;
 
 /**
  * MauCapture 2 main class.
- * 
- * @author Tulir293
+ *
+ * @author tulir
  * @since 2.0.0
  */
 public class MauCapture {
@@ -64,7 +64,7 @@ public class MauCapture {
 	/** Configuration path */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
 	/** Version string */
-	public static final String version = "2.0 B8";
+	public static final String version = "2.0";
 	/** Main frame */
 	private JFrame frame;
 	/** Non-toggle button */
@@ -77,12 +77,12 @@ public class MauCapture {
 	private JScrollPane jsp;
 	/** Drawing area */
 	private JDrawPlate jdp;
-	
+
 	/** Config value */
 	private String username = "", authtoken = "", url = "", password = "", saveLocation = System.getProperty("user.home"), uploadFormat = "png";
 	/** Config value */
 	private boolean savePassword = false, hideImage = false;
-	
+
 	public MauCapture() {
 		frame = new JFrame("mauCapture " + version);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,8 +97,8 @@ public class MauCapture {
 			public void componentResized(ComponentEvent evt) {
 				int width = frame.getContentPane().getWidth(), height = frame.getContentPane().getHeight();
 				if (width < 520 || height < 440) {
-					if (width < 520) width = 520;
-					if (height < 440) height = 440;
+					if (width < 520) { width = 520; }
+					if (height < 440) { height = 440; }
 					frame.getContentPane().setPreferredSize(new Dimension(width, height));
 					frame.pack();
 					return;
@@ -106,7 +106,7 @@ public class MauCapture {
 				top.setSize(width, 48);
 				side.setSize(48, height);
 				jsp.setSize(width - 48, height - 48);
-				
+
 				preferences.setLocation(width - 48, 0);
 				uploadImgur.setLocation(width - 48 - 1 * 144, 0);
 				uploadMIS.setLocation(width - 48 - 2 * 144, 0);
@@ -126,28 +126,27 @@ public class MauCapture {
 				}
 			}
 		});
-		/* @mauformat=off
+		/*
 		 * Add application-wide key listener for keybinds
 		 * 	CTRL+S - Save image to disk
 		 *  CTRL+C - Copy image to clipboard
 		 *  CTRL+I - Import image from disk
 		 *  Escape - Quit MauCapture
-		 * @mauformat=on
 		 */
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				// Ignore all non-keydown events.
-				if (e.getID() != KeyEvent.KEY_PRESSED) return false;
+				if (e.getID() != KeyEvent.KEY_PRESSED) { return false; }
 				// Ignore keybinds if the screenshot or main frame is not focused.
-				if (!frame.isFocused() && !Screenshot.takingScreenshot) return false;
-				if (Screenshot.takingScreenshot) return false;
+				if (!frame.isFocused() && !Screenshot.takingScreenshot) { return false; }
+				if (Screenshot.takingScreenshot) { return false; }
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					frame.dispose();
 					System.exit(0);
 					return true;
 				}
-				if (!e.isControlDown() || e.isAltDown() || e.isShiftDown()) return false;
+				if (!e.isControlDown() || e.isAltDown() || e.isShiftDown()) { return false; }
 				if (e.getKeyCode() == KeyEvent.VK_S && jdp.getImage() != null) {
 					FileManager.save(MauCapture.this);
 				} else if (e.getKeyCode() == KeyEvent.VK_I) {
@@ -159,42 +158,39 @@ public class MauCapture {
 					JOptionPane.showMessageDialog(getFrame(), "The image has been copied to your clipboard.", "Image copied", JOptionPane.INFORMATION_MESSAGE);
 				} else if (e.getKeyCode() == KeyEvent.VK_U) {
 					Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
-				} else return false;
+				} else { return false; }
 				return true;
 			}
 		});
 		frame.setLayout(null);
-		
+
 		top = new JPanel(null);
 		top.setLocation(0, 0);
-		
+
 		side = new JPanel(null);
 		side.setLocation(0, 48);
-		
+
 		capture = new JButton("New Capture", getIcon("capture.png"));
 		capture.setSize(144, 48);
 		capture.setLocation(0, 0);
 		capture.setToolTipText("Take a new capture");
 		capture.setActionCommand("CAPTURE");
-		capture.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				Screenshot.takeScreenshot(MauCapture.this);
+		capture.addActionListener((ActionEvent e) -> {
+			frame.setVisible(false);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
 			}
+			Screenshot.takeScreenshot(MauCapture.this);
 		});
-		
+
 		preferences = createButton("preferences.png", 48, 48, 0, 0, "Preferences", settings, "PREFS");
 		uploadMIS = createButton("mauImageServer.png", 144, 48, 0, 0, "Upload to a mauImageServer", export, "MIS");
 		uploadMIS.setText("MIS Upload");
 		uploadImgur = createButton("imgur.png", 144, 48, 0, 0, "Upload to Imgur", export, "IMGUR");
 		uploadImgur.setText("Imgur Upload");
-		
+
 		color = createButton("color.png", 48, 48, 0, 0 * 48, "Change draw/text color", settings, "COLOR");
 		arrow = createToggleButton("arrow.png", 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
 		rectangle = createToggleButton("rectangle.png", 48, 48, 0, 2 * 48, "Draw a rectangle", editors, "SQUARE");
@@ -204,34 +200,34 @@ public class MauCapture {
 		text = createToggleButton("text.png", 48, 48, 0, 5 * 48, "Write text", editors, "TEXT");
 		erase = createToggleButton("eraser.png", 48, 48, 0, 6 * 48, "Eraser", editors, "ERASE");
 		crop = createToggleButton("crop.png", 48, 48, 0, 7 * 48, "Crop the image", cropListener, "CROP");
-		
+
 		jdp = new JDrawPlate(null);
 		jdp.setLocation(0, 0);
 		jdp.setFont(lato);
-		
+
 		jsp = new JScrollPane();
 		jsp.setLocation(48, 48);
 		jsp.setViewportView(jdp);
 		jsp.setBackground(top.getBackground());
-		
+
 		text.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				jdp.writeChar(e.getKeyChar());
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {}
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {}
 		});
-		
+
 		top.add(capture);
 		top.add(preferences);
 		top.add(uploadMIS);
 		top.add(uploadImgur);
-		
+
 		side.add(color);
 		side.add(arrow);
 		side.add(rectangle);
@@ -240,18 +236,18 @@ public class MauCapture {
 		side.add(text);
 		side.add(erase);
 		side.add(crop);
-		
+
 		frame.add(top);
 		frame.add(side);
 		frame.add(jsp);
 	}
-	
+
 	public void saveConfig() throws IOException {
 		JsonObject config = new JsonObject();
 		config.addProperty("username", username);
 		config.addProperty("authtoken", authtoken);
 		config.addProperty("address", url);
-		if (savePassword) config.addProperty("password", password);
+		if (savePassword) { config.addProperty("password", password); }
 		config.addProperty("save-password", savePassword);
 		config.addProperty("save-location", saveLocation);
 		config.addProperty("upload-format", uploadFormat);
@@ -260,46 +256,60 @@ public class MauCapture {
 		gson.toJson(config, writer);
 		writer.close();
 	}
-	
+
 	public void loadConfig() throws FileNotFoundException {
-		if (!MauCapture.config.exists()) return;
+		if (!MauCapture.config.exists()) { return; }
 		JsonParser parser = new JsonParser();
 		JsonObject config = parser.parse(new FileReader(MauCapture.config)).getAsJsonObject();
 		JsonElement e;
-		
+
 		e = config.get("username");
-		if (e != null && e.isJsonPrimitive()) username = e.getAsString();
+		if (e != null && e.isJsonPrimitive()) {
+			username = e.getAsString();
+		}
 		e = config.get("authtoken");
-		if (e != null && e.isJsonPrimitive()) authtoken = e.getAsString();
+		if (e != null && e.isJsonPrimitive()) {
+			authtoken = e.getAsString();
+		}
 		e = config.get("address");
-		if (e != null && e.isJsonPrimitive()) url = e.getAsString();
+		if (e != null && e.isJsonPrimitive()) {
+			url = e.getAsString();
+		}
 		e = config.get("password");
-		if (e != null && e.isJsonPrimitive()) password = e.getAsString();
+		if (e != null && e.isJsonPrimitive()) {
+			password = e.getAsString();
+		}
 		e = config.get("save-password");
-		if (e != null && e.isJsonPrimitive()) savePassword = e.getAsBoolean();
+		if (e != null && e.isJsonPrimitive()) {
+			savePassword = e.getAsBoolean();
+		}
 		e = config.get("save-location");
-		if (e != null && e.isJsonPrimitive()) saveLocation = e.getAsString();
+		if (e != null && e.isJsonPrimitive()) {
+			saveLocation = e.getAsString();
+		}
 		e = config.get("upload-format");
-		if (e != null && e.isJsonPrimitive()) uploadFormat = e.getAsString();
+		if (e != null && e.isJsonPrimitive()) {
+			uploadFormat = e.getAsString();
+		}
 	}
-	
+
 	/**
 	 * Create and configure a button.
 	 */
 	private JButton createButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
 		return configureButton(new JButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
-	
+
 	/**
 	 * Create and configure a toggle button.
 	 */
 	private JToggleButton createToggleButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
 		return configureButton(new JToggleButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
-	
+
 	/**
 	 * Configure the given button.
-	 * 
+	 *
 	 * @return The given button.
 	 */
 	private <T extends AbstractButton> T configureButton(T button, int width, int height, int x, int y, String tooltip, ActionListener aclis, String actionCommand) {
@@ -313,7 +323,7 @@ public class MauCapture {
 		button.setActionCommand(actionCommand);
 		return button;
 	}
-	
+
 	/**
 	 * Open the given buffered image in the MauCapture Editor.
 	 */
@@ -322,58 +332,59 @@ public class MauCapture {
 		jdp.setBackgroundImage(bi);
 		jdp.setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
 		int prefWidth = 1280, prefHeight = 720;
-		if (bi.getWidth() < prefWidth) prefWidth = bi.getWidth();
-		if (bi.getHeight() < prefHeight) prefHeight = bi.getHeight();
+		if (bi.getWidth() < prefWidth) {
+			prefWidth = bi.getWidth();
+		}
+		if (bi.getHeight() < prefHeight) {
+			prefHeight = bi.getHeight();
+		}
 		jsp.setSize(prefWidth, prefWidth);
 		frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 50, prefHeight + 50));
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Action Listener for editing buttons (erase, text, arrow, etc)
 	 */
-	private ActionListener editors = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			arrow.setSelected(false);
-			rectangle.setSelected(false);
-			circle.setSelected(false);
-			pencil.setSelected(false);
-			text.setSelected(false);
-			erase.setSelected(false);
-			JToggleButton b = (JToggleButton) evt.getSource();
-			b.setSelected(true);
-			jdp.setDrawMode(JDrawPlate.DrawMode.valueOf(evt.getActionCommand()));
-		}
+	private ActionListener editors = (ActionEvent evt) -> {
+		arrow.setSelected(false);
+		rectangle.setSelected(false);
+		circle.setSelected(false);
+		pencil.setSelected(false);
+		text.setSelected(false);
+		erase.setSelected(false);
+		JToggleButton b = (JToggleButton) evt.getSource();
+		b.setSelected(true);
+		jdp.setDrawMode(JDrawPlate.DrawMode.valueOf(evt.getActionCommand()));
 	};
-	
+
 	/**
 	 * Action Listener for exporting buttons.
 	 */
-	private ActionListener export = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			if (evt.getActionCommand().equals("MIS")) {
-				Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
-			} else if (evt.getActionCommand().equals("IMGUR")) {
-				Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
-			}
+	private ActionListener export = (ActionEvent evt) -> {
+		if (evt.getActionCommand().equals("MIS")) {
+			Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
+		} else if (evt.getActionCommand().equals("IMGUR")) {
+			Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
 		}
 	};
-	
+
 	/**
 	 * Cropping
 	 */
 	private ActionListener cropListener = new ActionListener() {
 		private JSelectableImage si;
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (crop.isSelected()) enterCrop();
-			else exitCrop();
+			if (crop.isSelected()) {
+				enterCrop();
+			} else {
+				exitCrop();
+			}
 		}
-		
+
 		private MouseAdapter siMouse = new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -389,8 +400,12 @@ public class MauCapture {
 					exitCrop();
 					jdp.setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
 					int prefWidth = 1280, prefHeight = 720;
-					if (bi.getWidth() < prefWidth) prefWidth = bi.getWidth();
-					if (bi.getHeight() < prefHeight) prefHeight = bi.getHeight();
+					if (bi.getWidth() < prefWidth) {
+						prefWidth = bi.getWidth();
+					}
+					if (bi.getHeight() < prefHeight) {
+						prefHeight = bi.getHeight();
+					}
 					jsp.setSize(prefWidth, prefWidth);
 					frame.getContentPane().setPreferredSize(new Dimension(prefWidth + 50, prefHeight + 50));
 					frame.pack();
@@ -404,7 +419,7 @@ public class MauCapture {
 				}
 			}
 		};
-		
+
 		private void enterCrop() {
 			// Create a cropping pane with the image from the drawplate.
 			si = new JSelectableImage(jdp.getImage());
@@ -424,7 +439,7 @@ public class MauCapture {
 			// Repaint the frame to make sure all changes are visible.
 			frame.repaint();
 		}
-		
+
 		private void exitCrop() {
 			jsp.setViewportView(jdp);
 			// Enable all other editing buttons.
@@ -440,113 +455,113 @@ public class MauCapture {
 			frame.repaint();
 		}
 	};
-	
+
 	/**
 	 * Action Listener for the preferences and color buttons.
 	 */
-	private ActionListener settings = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent evt) {
-			if (evt.getActionCommand().equals("PREFS")) {
-				Preferences.preferences(MauCapture.this);
-			} else if (evt.getActionCommand().equals("COLOR")) {
-				ColorSelector.colorSelector(MauCapture.this);
-			}
+	private ActionListener settings = (ActionEvent evt) -> {
+		if (evt.getActionCommand().equals("PREFS")) {
+			Preferences.preferences(MauCapture.this);
+		} else if (evt.getActionCommand().equals("COLOR")) {
+			ColorSelector.colorSelector(MauCapture.this);
 		}
 	};
-	
+
 	/**
 	 * Get an icon from the assets.
 	 */
 	private ImageIcon getIcon(String path) {
 		path = "assets/" + path;
 		URL url = MauCapture.class.getClassLoader().getResource(path);
-		if (url != null) return new ImageIcon(url);
-		else System.err.println("Couldn't find file: " + path);
+		if (url != null) {
+			return new ImageIcon(url);
+		} else {
+			System.err.println("Couldn't find file: " + path);
+		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the main frame.
 	 */
 	public JFrame getFrame() {
 		return frame;
 	}
-	
+
 	/**
 	 * Get the drawing plate.
 	 */
 	public JDrawPlate getDrawPlate() {
 		return jdp;
 	}
-	
+
 	/**
 	 * Get the mauImageServer address.
 	 */
 	public String getAddress() {
 		return url;
 	}
-	
+
 	/**
 	 * Set the mauImageServer address.
 	 */
 	public void setAddress(String url) {
 		this.url = url;
 	}
-	
+
 	/**
 	 * Set the saved password.
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	/**
 	 * Get the saved password.
 	 */
 	public String getPassword() {
 		return password;
 	}
-	
+
 	/**
 	 * Get whether or not the password should be saved.
 	 */
 	public boolean savePassword() {
 		return savePassword;
 	}
-	
+
 	/**
 	 * Set whether or not the password should be saved.
 	 */
 	public void setSavePassword(boolean savePassword) {
 		this.savePassword = savePassword;
 	}
-	
+
 	public boolean hideImage() {
 		return hideImage;
 	}
-	
+
 	public void setHideImage(boolean hideImage) {
 		this.hideImage = hideImage;
 	}
-	
+
 	/**
 	 * Get the username that should be used for MIS authentication.
 	 */
 	public String getUsername() {
 		return username;
 	}
-	
+
 	/**
 	 * Set the username that should be used for MIS authentication.
 	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	/**
 	 * Try to log in to the configured MIS server using the given username and password.
-	 * 
+	 *
 	 * @return The authentication token, or a simple error word with "{@code err:}" as the prefix.
 	 */
 	public String login(String url, String username, String password) {
@@ -555,50 +570,53 @@ public class MauCapture {
 			authtoken = result;
 			this.username = username;
 			return "success";
-		} else return result;
+		} else {
+			return result;
+		}
 	}
-	
+
 	/**
 	 * Get the saved authentication token.
 	 */
 	public String getAuthToken() {
 		return authtoken;
 	}
-	
+
 	/**
 	 * Get the directory which will be open at first when saving (or importing) images to disk.
 	 */
 	public String getSaveLocation() {
 		return saveLocation;
 	}
-	
+
 	/**
 	 * Set the directory which will be open at first when saving (or importing) images to disk.
 	 */
 	public void setSaveLocation(String saveLocation) {
 		this.saveLocation = saveLocation;
 	}
-	
+
 	public void setUploadFormat(String uploadFormat) {
 		this.uploadFormat = uploadFormat;
 	}
-	
+
 	public String getUploadFormat() {
 		return uploadFormat;
 	}
-	
+
 	private final char[] randomizeAllowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-	
+
 	/**
 	 * Generate a random string matching the regex [a-zA-Z0-9]{{@code chars}}
 	 */
 	private String randomize(int chars) {
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < chars; i++)
+		for (int i = 0; i < chars; i++) {
 			sb.append(randomizeAllowed[r.nextInt(randomizeAllowed.length)]);
+		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Loads assets/lato.ttf and returns it as an AWT font.
 	 */
@@ -610,7 +628,7 @@ public class MauCapture {
 			return new Font(Font.SANS_SERIF, Font.PLAIN, 11);
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		// Use native L&F
 		try {
