@@ -11,7 +11,7 @@ import java.io.*;
  * A FileBody extension that supports progress bars.
  *
  * @author tulir
- * @since 2.0.0
+ * @since 2.1.0
  */
 public class ProgressFileEntity extends FileEntity {
 	private JProgressBar progress;

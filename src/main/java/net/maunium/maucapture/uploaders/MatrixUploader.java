@@ -35,10 +35,10 @@ import java.io.IOException;
 import java.util.Base64;
 
 /**
- * An Uploader implementation for mauImageServer 2.0
+ * An Uploader implementation for Matrix media repositories
  *
  * @author tulir
- * @since 2.0.0
+ * @since 2.1.0
  */
 public class MatrixUploader extends Uploader {
 	private String addr, fileName, accessToken;

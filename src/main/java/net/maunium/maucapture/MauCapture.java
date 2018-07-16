@@ -73,7 +73,7 @@ public class MauCapture {
 	/**
 	 * Version string
 	 */
-	public static final String version = "2.0";
+	public static final String version = "2.1";
 	/**
 	 * Main frame
 	 */
