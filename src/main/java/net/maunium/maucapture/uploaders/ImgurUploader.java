@@ -38,7 +38,7 @@ import net.maunium.maucapture.util.ProgressFileBody;
 public class ImgurUploader extends Uploader {
 	public ImgurUploader(JFrame host) {
 		super(host);
-		frame.setTitle("MauCapture Imgur Uploader");
+		frame.setTitle("mauCapture Imgur Uploader");
 		p.setString("Preparing to upload to imgur.com");
 	}
 

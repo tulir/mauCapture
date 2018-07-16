@@ -50,7 +50,7 @@ public class MISUploader extends Uploader {
 		this.username = username;
 		this.authtoken = authtoken;
 		this.hidden = hidden;
-		frame.setTitle("MauCapture MIS Uploader");
+		frame.setTitle("mauCapture MIS Uploader");
 		p.setString("Preparing to upload to " + addr);
 	}
 

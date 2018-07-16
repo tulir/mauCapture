@@ -46,6 +46,7 @@ import net.maunium.maucapture.swing.JDrawPlate;
 import net.maunium.maucapture.swing.JSelectableImage;
 import net.maunium.maucapture.uploaders.ImgurUploader;
 import net.maunium.maucapture.uploaders.MISUploader;
+import net.maunium.maucapture.uploaders.MatrixUploader;
 import net.maunium.maucapture.uploaders.Uploader;
 import net.maunium.maucapture.util.TransferableImage;
 
@@ -56,32 +57,57 @@ import net.maunium.maucapture.util.TransferableImage;
  * @since 2.0.0
  */
 public class MauCapture {
-	/** The Random instance used to generate image names */
+	/**
+	 * The Random instance used to generate image names
+	 */
 	private Random r = new Random(System.nanoTime());
 	public static final String[] imageTypes = ImageIO.getWriterFileSuffixes();
-	/** Main font of MauCapture */
+	/**
+	 * Main font of MauCapture
+	 */
 	public static final Font lato = createLato();
-	/** Configuration path */
+	/**
+	 * Configuration path
+	 */
 	public static final File config = new File(new File(System.getProperty("user.home")), ".maucapture.json");
-	/** Version string */
+	/**
+	 * Version string
+	 */
 	public static final String version = "2.0";
-	/** Main frame */
+	/**
+	 * Main frame
+	 */
 	private JFrame frame;
-	/** Non-toggle button */
-	private JButton capture, preferences, uploadMIS, uploadImgur, color;
-	/** Togglebutton (editing) */
+	/**
+	 * Non-toggle button
+	 */
+	private JButton capture, preferences, uploadMIS, uploadMatrix, uploadImgur, color;
+	/**
+	 * Togglebutton (editing)
+	 */
 	private JToggleButton arrow, rectangle, circle, pencil, text, erase, crop;
-	/** Button panel */
+	/**
+	 * Button panel
+	 */
 	private JPanel top, side;
-	/** Scroll pane for drawing area */
+	/**
+	 * Scroll pane for drawing area
+	 */
 	private JScrollPane jsp;
-	/** Drawing area */
+	/**
+	 * Drawing area
+	 */
 	private JDrawPlate jdp;
 
-	/** Config value */
+	/**
+	 * Config value
+	 */
 	private String username = "", authtoken = "", url = "", password = "",
-			saveLocation = System.getProperty("user.home"), uploadFormat = "png";
-	/** Config value */
+			saveLocation = System.getProperty("user.home"), uploadFormat = "png",
+			mxAccessToken, matrixURL = "https://matrix.org";
+	/**
+	 * Config value
+	 */
 	private boolean savePassword = false, hideImage = false;
 
 	public MauCapture() {
@@ -113,8 +139,9 @@ public class MauCapture {
 				jsp.setSize(width - 48, height - 48);
 
 				preferences.setLocation(width - 48, 0);
-				uploadImgur.setLocation(width - 48 - 1 * 144, 0);
-				uploadMIS.setLocation(width - 48 - 2 * 144, 0);
+				uploadImgur.setLocation(width - 48 - 1 * 96, 0);
+				uploadMatrix.setLocation(width - 48 - 2 * 96, 0);
+				uploadMIS.setLocation(width - 48 - 3 * 96, 0);
 			}
 		});
 		/*
@@ -173,7 +200,11 @@ public class MauCapture {
 							JOptionPane.INFORMATION_MESSAGE);
 				} else if (e.getKeyCode() == KeyEvent.VK_U) {
 					Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
-				} else { return false; }
+				} else if (e.getKeyCode() == KeyEvent.VK_M) {
+					Uploader.upload(new MatrixUploader(getFrame(), matrixURL, randomize(5) + ".png", mxAccessToken), jdp.getImage());
+				} else {
+					return false;
+				}
 				return true;
 			}
 		});
@@ -201,10 +232,12 @@ public class MauCapture {
 		});
 
 		preferences = createButton("preferences.png", 48, 48, 0, 0, "Preferences", settings, "PREFS");
-		uploadMIS = createButton("mauImageServer.png", 144, 48, 0, 0, "Upload to a mauImageServer", export, "MIS");
-		uploadMIS.setText("MIS Upload");
-		uploadImgur = createButton("imgur.png", 144, 48, 0, 0, "Upload to Imgur", export, "IMGUR");
-		uploadImgur.setText("Imgur Upload");
+		uploadMIS = createButton("mauImageServer.png", 96, 48, 0, 0, "Upload to a mauImageServer", export, "MIS");
+		uploadMIS.setText("MIS");
+		uploadMatrix = createButton("matrix.png", 96, 48, 0, 0, "Upload to Matrix", export, "MATRIX");
+		uploadMatrix.setText("Matrix");
+		uploadImgur = createButton("imgur.png", 96, 48, 0, 0, "Upload to Imgur", export, "IMGUR");
+		uploadImgur.setText("Imgur");
 
 		color = createButton("color.png", 48, 48, 0, 0 * 48, "Change draw/text color", settings, "COLOR");
 		arrow = createToggleButton("arrow.png", 48, 48, 0, 1 * 48, "Draw an arrow", editors, "ARROW");
@@ -232,15 +265,18 @@ public class MauCapture {
 			}
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+			}
 
 			@Override
-			public void keyPressed(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+			}
 		});
 
 		top.add(capture);
 		top.add(preferences);
 		top.add(uploadMIS);
+		top.add(uploadMatrix);
 		top.add(uploadImgur);
 
 		side.add(color);
@@ -268,6 +304,8 @@ public class MauCapture {
 		config.addProperty("save-password", savePassword);
 		config.addProperty("save-location", saveLocation);
 		config.addProperty("upload-format", uploadFormat);
+		config.addProperty("matrix-url", matrixURL);
+		config.addProperty("matrix-access-token", mxAccessToken);
 		JsonWriter writer = new JsonWriter(new FileWriter(MauCapture.config));
 		Gson gson = new Gson();
 		gson.toJson(config, writer);
@@ -310,13 +348,21 @@ public class MauCapture {
 		if (e != null && e.isJsonPrimitive()) {
 			uploadFormat = e.getAsString();
 		}
+		e = config.get("matrix-url");
+		if (e != null && e.isJsonPrimitive()) {
+			matrixURL = e.getAsString();
+		}
+		e = config.get("matrix-access-token");
+		if (e != null && e.isJsonPrimitive()) {
+			mxAccessToken = e.getAsString();
+		}
 	}
 
 	/**
 	 * Create and configure a button.
 	 */
 	private JButton createButton(String icon, int width, int height, int x, int y, String tooltip, ActionListener aclis,
-			String actionCommand) {
+								 String actionCommand) {
 		return configureButton(new JButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 
@@ -324,7 +370,7 @@ public class MauCapture {
 	 * Create and configure a toggle button.
 	 */
 	private JToggleButton createToggleButton(String icon, int width, int height, int x, int y, String tooltip,
-			ActionListener aclis, String actionCommand) {
+											 ActionListener aclis, String actionCommand) {
 		return configureButton(new JToggleButton(getIcon(icon)), width, height, x, y, tooltip, aclis, actionCommand);
 	}
 
@@ -334,7 +380,7 @@ public class MauCapture {
 	 * @return The given button.
 	 */
 	private <T extends AbstractButton> T configureButton(T button, int width, int height, int x, int y, String tooltip,
-			ActionListener aclis, String actionCommand) {
+														 ActionListener aclis, String actionCommand) {
 		button.setFont(lato);
 		button.setBorderPainted(false);
 		button.setFocusPainted(false);
@@ -389,6 +435,8 @@ public class MauCapture {
 			Uploader.upload(new MISUploader(getFrame(), url, randomize(5), uploadFormat, username, authtoken, hideImage), jdp.getImage());
 		} else if (evt.getActionCommand().equals("IMGUR")) {
 			Uploader.upload(new ImgurUploader(getFrame()), jdp.getImage());
+		} else if (evt.getActionCommand().equals("MATRIX")) {
+			Uploader.upload(new MatrixUploader(getFrame(), matrixURL, randomize(5) + ".png", mxAccessToken), jdp.getImage());
 		}
 	};
 
@@ -608,6 +656,22 @@ public class MauCapture {
 		return authtoken;
 	}
 
+	public String getMxAccessToken() {
+		return mxAccessToken;
+	}
+
+	public void setMxAccessToken(String newat) {
+		this.mxAccessToken = newat;
+	}
+
+	public String getMatrixURL() {
+		return matrixURL;
+	}
+
+	public void setMatrixURL(String newURL) {
+		this.matrixURL = newURL;
+	}
+
 	/**
 	 * Get the directory which will be open at first when saving (or importing) images to disk.
 	 */
@@ -663,7 +727,8 @@ public class MauCapture {
 		// Use native L&F
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable t) {}
+		} catch (Throwable t) {
+		}
 		// Create a MauCapture instance.
 		MauCapture mc = new MauCapture();
 		try {

@@ -28,7 +28,7 @@ public class Preferences {
 		frame.setLayout(null);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(host.getFrame());
-		frame.getContentPane().setPreferredSize(new Dimension(500, 180));
+		frame.getContentPane().setPreferredSize(new Dimension(500, 215));
 		frame.pack();
 		frame.setFont(MauCapture.lato);
 		frame.addWindowListener(new WindowAdapter() {
@@ -88,33 +88,30 @@ public class Preferences {
 		JButton login = new JButton("Log in (get auth token)");
 		login.setLocation(255, 75);
 		login.setSize(240, 30);
-		login.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (addr.getText().length() <= 0 || username.getText().length() <= 0 || password.getPassword().length <= 0) {
-					JOptionPane.showMessageDialog(frame, "You must fill all the fillable fields to log in.", "Incomplete details", JOptionPane.ERROR_MESSAGE);
-					return;
+		login.addActionListener(e -> {
+			if (addr.getText().length() <= 0 || username.getText().length() <= 0 || password.getPassword().length <= 0) {
+				JOptionPane.showMessageDialog(frame, "You must fill all the fillable fields to log in.", "Incomplete details", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			String status = host.login(addr.getText(), username.getText(), String.valueOf(password.getPassword()));
+			switch (status) {
+			case "success":
+				if (!savePassword.isSelected()) {
+					password.setText("");
 				}
-				String status = host.login(addr.getText(), username.getText(), String.valueOf(password.getPassword()));
-				switch (status) {
-				case "success":
-					if (!savePassword.isSelected()) {
-						password.setText("");
-					}
-					authtoken.setText(host.getAuthToken());
-					JOptionPane.showMessageDialog(frame, "Successfully logged in as " + username.getText(), "Logged in", JOptionPane.INFORMATION_MESSAGE);
-					break;
-				case "err:incorrectpassword":
-					JOptionPane.showMessageDialog(frame, "The password you entered was incorrect.", "Incorrect password", JOptionPane.ERROR_MESSAGE);
-					break;
-				case "err:servererror":
-					JOptionPane.showMessageDialog(frame, "The server encountered an internal server error.", "Internal server error",
-							JOptionPane.ERROR_MESSAGE);
-					break;
-				case "err:exception":
-					JOptionPane.showMessageDialog(frame, "Failed to contact server.", "Connection error", JOptionPane.ERROR_MESSAGE);
-					break;
-				}
+				authtoken.setText(host.getAuthToken());
+				JOptionPane.showMessageDialog(frame, "Successfully logged in as " + username.getText(), "Logged in", JOptionPane.INFORMATION_MESSAGE);
+				break;
+			case "err:incorrectpassword":
+				JOptionPane.showMessageDialog(frame, "The password you entered was incorrect.", "Incorrect password", JOptionPane.ERROR_MESSAGE);
+				break;
+			case "err:servererror":
+				JOptionPane.showMessageDialog(frame, "The server encountered an internal server error.", "Internal server error",
+						JOptionPane.ERROR_MESSAGE);
+				break;
+			case "err:exception":
+				JOptionPane.showMessageDialog(frame, "Failed to contact server.", "Connection error", JOptionPane.ERROR_MESSAGE);
+				break;
 			}
 		});
 		login.setFont(MauCapture.lato);
@@ -135,38 +132,54 @@ public class Preferences {
 		hidden.setSize(240, 30);
 		hidden.setFont(MauCapture.lato);
 
+
+		JLabel mxURLl = new JLabel("Matrix");
+		mxURLl.setLocation(5, 145);
+		mxURLl.setSize(60, 30);
+		mxURLl.setFont(MauCapture.lato);
+
+		JTextField mxURL = new JTextField(host.getMatrixURL());
+		mxURL.setLocation(75, 145);
+		mxURL.setSize(175, 30);
+		mxURL.setFont(MauCapture.lato);
+
+		JLabel mxAccessTokenl = new JLabel("Token");
+		mxAccessTokenl.setLocation(255, 145);
+		mxAccessTokenl.setSize(70, 30);
+		mxAccessTokenl.setFont(MauCapture.lato);
+
+		JTextField mxAccessToken = new JTextField(host.getMxAccessToken());
+		mxAccessToken.setLocation(320, 145);
+		mxAccessToken.setSize(170, 30);
+		mxAccessToken.setFont(MauCapture.lato);
+
+
 		JButton save = new JButton("Save");
 		save.setSize(240, 30);
-		save.setLocation(5, 145);
-		save.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				host.setAddress(addr.getText());
-				if (savePassword.isSelected()) { host.setPassword(String.valueOf(password.getPassword())); }
-				host.setSavePassword(savePassword.isSelected());
-				host.setHideImage(hidden.isSelected());
-				host.setUsername(username.getText());
-				host.setUploadFormat((String) format.getSelectedItem());
-				try {
-					host.saveConfig();
-				} catch (IOException e1) {
-					System.err.println("Failed to save config:");
-					e1.printStackTrace();
-				}
-				frame.dispose();
+		save.setLocation(5, 180);
+		save.addActionListener(e -> {
+			host.setAddress(addr.getText());
+			if (savePassword.isSelected()) { host.setPassword(String.valueOf(password.getPassword())); }
+			host.setSavePassword(savePassword.isSelected());
+			host.setHideImage(hidden.isSelected());
+			host.setUsername(username.getText());
+			host.setUploadFormat((String) format.getSelectedItem());
+			host.setMxAccessToken(mxAccessToken.getText());
+			host.setMatrixURL(mxURL.getText());
+			try {
+				host.saveConfig();
+			} catch (IOException e1) {
+				System.err.println("Failed to save config:");
+				e1.printStackTrace();
 			}
+			frame.dispose();
 		});
 		save.setFont(MauCapture.lato);
 
 		JButton cancel = new JButton("Cancel");
 		cancel.setSize(240, 30);
-		cancel.setLocation(255, 145);
-		cancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-			}
-		});
+		cancel.setLocation(255, 180);
+		cancel.addActionListener(e -> frame.dispose());
 		cancel.setFont(MauCapture.lato);
 
 		frame.add(addr);
@@ -182,6 +195,10 @@ public class Preferences {
 		frame.add(format);
 		frame.add(formatl);
 		frame.add(hidden);
+		frame.add(mxURLl);
+		frame.add(mxURL);
+		frame.add(mxAccessTokenl);
+		frame.add(mxAccessToken);
 		frame.add(save);
 		frame.add(cancel);
 		frame.setVisible(true);
